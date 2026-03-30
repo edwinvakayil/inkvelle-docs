@@ -41,49 +41,62 @@ export default function PropTable() {
       </div>
 
       {/* Rows */}
-      {PROPS.map((p, i) => (
-        <div
-          key={p.name}
-          className="grid grid-cols-1 sm:grid-cols-[8rem_14rem_6rem_1fr] gap-2 px-5 py-4 transition-colors duration-150"
-          style={{
-            background: i % 2 === 0 ? "#ffffff" : "var(--ink-surface)",
-            borderBottom: i < PROPS.length - 1 ? "1px solid var(--ink-border)" : "none",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "rgba(120,120,140,0.04)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = i % 2 === 0 ? "#ffffff" : "var(--ink-surface)"; }}
-        >
-          <div>
-            <code
-              className="text-xs font-semibold"
-              style={{ color: "var(--ink-accent)", fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              {p.name}
-            </code>
-          </div>
-          <div>
-            <code
-              className="text-xs"
-              style={{ color: "#6355a0", fontFamily: "'JetBrains Mono', monospace", wordBreak: "break-word" as const }}
-            >
-              {p.type}
-            </code>
-          </div>
-          <div>
-            <code
-              className="text-xs"
-              style={{ color: "#6a7a8a", fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              {p.default}
-            </code>
-          </div>
+      <div className="flex flex-col">
+        {PROPS.map((p, i) => (
           <div
-            className="text-sm"
-            style={{ color: "var(--ink-sub)", lineHeight: 1.55 }}
+            key={p.name}
+            className="flex flex-col sm:grid sm:grid-cols-[8rem_14rem_6rem_1fr] gap-3 sm:gap-2 px-5 py-5 sm:py-4 transition-colors duration-150"
+            style={{
+              background: i % 2 === 0 ? "#ffffff" : "var(--ink-surface)",
+              borderBottom: i < PROPS.length - 1 ? "1px solid var(--ink-border)" : "none",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "rgba(120,120,140,0.04)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = i % 2 === 0 ? "#ffffff" : "var(--ink-surface)"; }}
           >
-            {p.description}
+            {/* Mobile labels + Values */}
+            <div className="flex flex-col sm:contents gap-1.5">
+              <div className="flex items-center justify-between sm:block">
+                <span className="sm:hidden text-[10px] uppercase tracking-wider font-bold opacity-40">Prop</span>
+                <code
+                  className="text-xs font-semibold"
+                  style={{ color: "var(--ink-accent)", fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  {p.name}
+                </code>
+              </div>
+              
+              <div className="flex items-center justify-between sm:block">
+                <span className="sm:hidden text-[10px] uppercase tracking-wider font-bold opacity-40">Type</span>
+                <code
+                  className="text-xs"
+                  style={{ color: "#6355a0", fontFamily: "'JetBrains Mono', monospace", wordBreak: "break-word" as const }}
+                >
+                  {p.type}
+                </code>
+              </div>
+
+              <div className="flex items-center justify-between sm:block">
+                <span className="sm:hidden text-[10px] uppercase tracking-wider font-bold opacity-40">Default</span>
+                <code
+                  className="text-xs"
+                  style={{ color: "#6a7a8a", fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  {p.default}
+                </code>
+              </div>
+
+              <div className="mt-1 sm:mt-0">
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--ink-sub)", lineHeight: 1.55 }}
+                >
+                  {p.description}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

@@ -304,17 +304,17 @@ export default function Page() {
           }}
         >
           {/* Left Group: Logo + Desktop Nav */}
-          <div className="flex items-center gap-8 xl:gap-12 pl-2">
+          <div className="flex items-center gap-4 xl:gap-12 pl-2 overflow-hidden">
             {/* Logo */}
-            <Link href="/" className="flex flex-shrink-0 items-center gap-2 group">
+            <Link href="/" className="flex flex-shrink-0 items-center gap-2 group min-w-0">
               <span
-                className="text-sm font-extrabold tracking-tight transition-opacity duration-200 group-hover:opacity-70"
+                className="text-sm font-extrabold tracking-tight transition-opacity duration-200 group-hover:opacity-70 flex-shrink-0"
                 style={{ ...mono, color: "var(--ink-text)" }}
               >
                 inkvelle
               </span>
               <span
-                className="hidden sm:inline-block text-xs font-medium"
+                className="hidden sm:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10"
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   color: "var(--ink-muted)",
@@ -555,53 +555,57 @@ export default function Page() {
                 View installation
               </a>
             </div>
-
-            {/* Feature pills */}
-            <div
-              className="flex flex-nowrap items-center gap-2.5 mt-12 overflow-x-auto pb-4 -mb-4 scrollbar-hide"
-              style={{ animation: "fadeUp 0.8s ease 0.45s both" }}
-            >
-              {[
-                "30+ animations", "Google Fonts auto-inject", "Custom motionConfig",
-                "motionRef (GSAP / Framer)", "Italic accent", "SSR-safe",
-                "TypeScript", "Zero dependencies",
-              ].map((f) => (
-                <div
-                  key={f}
-                  className="group shrink-0 relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 cursor-default select-none overflow-hidden"
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    background: "rgba(255, 255, 255, 0.4)",
-                    color: "var(--ink-sub)",
-                    border: "1px solid rgba(120, 120, 140, 0.12)",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)",
-                    backdropFilter: "blur(8px)",
-                    WebkitBackdropFilter: "blur(8px)",
-                  }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = "rgba(120, 120, 140, 0.3)";
-                    el.style.color = "var(--ink-text)";
-                    el.style.background = "rgba(255, 255, 255, 0.8)";
-                    el.style.transform = "translateY(-1px)";
-                    el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = "rgba(120, 120, 140, 0.12)";
-                    el.style.color = "var(--ink-sub)";
-                    el.style.background = "rgba(255, 255, 255, 0.4)";
-                    el.style.transform = "translateY(0)";
-                    el.style.boxShadow = "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)";
-                  }}
-                >
-                  <span
-                    className="w-1 h-1 rounded-full opacity-40 transition-all duration-300 group-hover:scale-125 group-hover:opacity-100"
-                    style={{ background: "var(--ink-accent)" }}
-                  />
-                  {f}
-                </div>
-              ))}
+            {/* Feature pills - scrollable on mobile */}
+            <div className="relative mt-12 w-full">
+              <div
+                className="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-4 -mb-4 scrollbar-hide"
+                style={{ 
+                  animation: "fadeUp 0.8s ease 0.45s both",
+                  WebkitMaskImage: "linear-gradient(to right, black 85%, transparent 100%)"
+                }}
+              >
+                {[
+                  "30+ animations", "Google Fonts auto-inject", "Custom motionConfig",
+                  "motionRef (GSAP / Framer)", "Italic accent", "SSR-safe",
+                  "TypeScript", "Zero dependencies",
+                ].map((f) => (
+                  <div
+                    key={f}
+                    className="group shrink-0 relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 cursor-default select-none overflow-hidden"
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      background: "rgba(255, 255, 255, 0.4)",
+                      color: "var(--ink-sub)",
+                      border: "1px solid rgba(120, 120, 140, 0.12)",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget as HTMLDivElement;
+                      el.style.borderColor = "rgba(120, 120, 140, 0.3)";
+                      el.style.color = "var(--ink-text)";
+                      el.style.background = "rgba(255, 255, 255, 0.8)";
+                      el.style.transform = "translateY(-1px)";
+                      el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget as HTMLDivElement;
+                      el.style.borderColor = "rgba(120, 120, 140, 0.12)";
+                      el.style.color = "var(--ink-sub)";
+                      el.style.background = "rgba(255, 255, 255, 0.4)";
+                      el.style.transform = "translateY(0)";
+                      el.style.boxShadow = "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)";
+                    }}
+                  >
+                    <span 
+                      className="w-1 h-1 rounded-full opacity-40 transition-all duration-300 group-hover:scale-125 group-hover:opacity-100" 
+                      style={{ background: "var(--ink-accent)" }} 
+                    />
+                    {f}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
@@ -840,22 +844,21 @@ export default function Page() {
               desc="inkvelle is fully SSR-safe. All DOM work happens inside useInsertionEffect — never called on the server. Text renders in server HTML; animations play after hydration."
             />
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-4">
-              <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div className="flex flex-col gap-2 min-w-0">
                 <h3 className="text-base font-bold" style={{ ...heading, color: "var(--ink-text)" }}>App Router</h3>
                 <CodeBlock code={NEXTJS_LAYOUT_CODE} language="tsx" />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 min-w-0">
                 <h3 className="text-base font-bold" style={{ ...heading, color: "var(--ink-text)" }}>Pages Router</h3>
                 <CodeBlock code={NEXTJS_PAGES_CODE} language="tsx" />
               </div>
             </div>
             <CodeBlock code={NEXTJS_PAGE_CODE} language="tsx" />
 
-            {/* SSR table */}
             <div className="mt-8 rounded-xl overflow-hidden" style={{ border: "1px solid var(--ink-border)" }}>
               <div
-                className="grid px-5 py-3 text-xs uppercase tracking-widest font-medium"
+                className="hidden sm:grid px-5 py-3 text-xs uppercase tracking-widest font-medium"
                 style={{ gridTemplateColumns: "1fr 1fr 1fr", background: "var(--ink-surface2)", color: "var(--ink-muted)", borderBottom: "1px solid var(--ink-border)", ...mono }}
               >
                 <span>Prop</span><span>Server</span><span>Client</span>
@@ -869,12 +872,21 @@ export default function Page() {
               ].map((row, i, arr) => (
                 <div
                   key={i}
-                  className="grid px-5 py-3 items-start gap-4 text-xs"
+                  className="flex flex-col sm:grid px-5 py-4 sm:py-3 items-start gap-3 sm:gap-4 text-xs"
                   style={{ gridTemplateColumns: "1fr 1fr 1fr", background: i % 2 === 0 ? "#ffffff" : "var(--ink-surface)", borderBottom: i < arr.length - 1 ? "1px solid var(--ink-border)" : "none", ...mono }}
                 >
-                  <code style={{ color: "var(--ink-accent)" }}>{row.prop}</code>
-                  <span style={{ color: "var(--ink-sub)" }}>{row.server}</span>
-                  <span style={{ color: "var(--ink-sub)" }}>{row.client}</span>
+                  <div className="flex items-center justify-between w-full sm:block">
+                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Prop</span>
+                    <code style={{ color: "var(--ink-accent)" }}>{row.prop}</code>
+                  </div>
+                  <div className="flex items-center justify-between w-full sm:block">
+                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Server</span>
+                    <span style={{ color: "var(--ink-sub)" }}>{row.server}</span>
+                  </div>
+                  <div className="flex items-center justify-between w-full sm:block">
+                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Client</span>
+                    <span style={{ color: "var(--ink-sub)" }}>{row.client}</span>
+                  </div>
                 </div>
               ))}
             </div>

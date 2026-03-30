@@ -56,7 +56,7 @@ export default function HeroPlayground() {
     >
       {/* Preview */}
       <div
-        className="flex items-center justify-center min-h-[240px] px-8 py-14 relative overflow-hidden"
+        className="flex items-center justify-center min-h-[180px] sm:min-h-[240px] px-4 sm:px-8 py-10 sm:py-14 relative overflow-hidden"
         style={{ background: "var(--ink-surface)" }}
       >
         {/* Subtle dot grid */}
@@ -93,12 +93,12 @@ export default function HeroPlayground() {
           <label className="text-xs uppercase tracking-widest font-medium" style={{ color: "var(--ink-muted)", fontFamily: "'JetBrains Mono', monospace" }}>
             font
           </label>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="grid grid-cols-2 xs:grid-cols-3 sm:flex sm:flex-wrap gap-1.5">
             {FONTS.map((f) => (
               <button
                 key={f}
                 onClick={() => { setFont(f); replay(); }}
-                className="px-2.5 py-1 rounded-lg text-xs transition-all duration-150"
+                className="px-2.5 py-2 sm:py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150"
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   background: font === f ? "rgba(120,120,140,0.1)" : "var(--ink-surface)",
@@ -199,12 +199,12 @@ export default function HeroPlayground() {
           <label className="text-xs uppercase tracking-widest font-medium" style={{ color: "var(--ink-muted)", fontFamily: "'JetBrains Mono', monospace" }}>
             animation
           </label>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="grid grid-cols-3 xs:grid-cols-4 sm:flex sm:flex-wrap gap-1.5">
             {ANIMATIONS.map((a) => (
               <button
                 key={a}
                 onClick={() => { setAnimation(a); replay(); }}
-                className="px-2.5 py-1 rounded-lg text-xs transition-all duration-150"
+                className="px-2 py-2 sm:px-2.5 sm:py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150"
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   background: animation === a ? "rgba(120,120,140,0.1)" : "var(--ink-surface)",
