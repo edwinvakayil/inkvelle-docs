@@ -183,7 +183,7 @@ export default function MotionConfigDemo() {
           {[
             { label: "duration (s)", value: duration, set: setDuration },
             { label: "delay (s)",    value: delay,    set: setDelay    },
-          ].map(({ label, value, set }, i) => (
+          ].map(({ label, value, set }) => (
             <div
               key={label}
               className="px-5 py-4"

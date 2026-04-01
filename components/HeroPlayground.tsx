@@ -23,7 +23,6 @@ const ACCENT_COLORS = [
 ];
 
 const mono    = { fontFamily: "'JetBrains Mono', monospace" } as const;
-const heading = { fontFamily: "'Bricolage Grotesque', sans-serif" } as const;
 
 // ─── Tiny sub-components ──────────────────────────────────────────────────────
 

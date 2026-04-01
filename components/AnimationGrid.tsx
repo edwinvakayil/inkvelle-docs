@@ -146,8 +146,6 @@ export default function AnimationGrid() {
       >
         {ANIMATIONS.map(({ name, desc }, idx) => {
           const isActive = active === name;
-          const totalCols = 5; // lg breakpoint
-          const isLastRow = idx >= ANIMATIONS.length - (ANIMATIONS.length % totalCols || totalCols);
 
           return (
             <button
