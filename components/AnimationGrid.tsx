@@ -3,56 +3,54 @@ import { useState, useCallback } from "react";
 import { Typography } from "inkvelle";
 
 const ANIMATIONS = [
-  { name: "rise", desc: "Smooth upward fade-in", category: "original" },
-  { name: "stagger", desc: "Word-by-word entrance", category: "original" },
-  { name: "clip", desc: "Unmasked left to right", category: "original" },
-  { name: "pop", desc: "Spring scale-in", category: "original" },
-  { name: "letters", desc: "Letter-by-letter slide", category: "original" },
-  { name: "blur", desc: "Emerges from a blur", category: "original" },
-  { name: "flip", desc: "3D perspective rotate", category: "original" },
-  { name: "swipe", desc: "Slides from the right", category: "original" },
-  { name: "typewriter", desc: "Character reveal", category: "original" },
-  { name: "bounce", desc: "Drop with a bounce", category: "original" },
-  { name: "velvet", desc: "Soft skew drift", category: "modern" },
-  { name: "curtain", desc: "Per-word upward clip", category: "modern" },
-  { name: "morph", desc: "Squash-and-stretch spring", category: "modern" },
-  { name: "ground", desc: "Rises from baseline", category: "modern" },
-  { name: "cascade", desc: "Diagonal char waterfall", category: "modern" },
-  { name: "spotlight", desc: "Letterspace compress-open", category: "modern" },
-  { name: "ink", desc: "Gentle scale fade", category: "modern" },
-  { name: "hinge", desc: "Rotates from left edge", category: "modern" },
-  { name: "stretch", desc: "Horizontal rubber-band", category: "modern" },
-  { name: "peel", desc: "Bottom-to-top clip", category: "modern" },
-  { name: "ripple", desc: "Elastic scale outward", category: "modern" },
-  { name: "cinch", desc: "Chars pinch then snap", category: "modern" },
-  { name: "tiltrise", desc: "Rise while untilting", category: "modern" },
-  { name: "unfurl", desc: "Expands from center", category: "new" },
-  { name: "billboard", desc: "Y-axis rotation", category: "new" },
-  { name: "tectonic", desc: "Alternating side slam", category: "new" },
-  { name: "stratify", desc: "Z-depth blur flight", category: "new" },
-  { name: "orbit", desc: "Dot grows + rotates", category: "new" },
-  { name: "liquid", desc: "Cross-axis squash spring", category: "new" },
-  { name: "noiseFade", desc: "Signal-lock opacity", category: "new" },
-  { name: "slab", desc: "Print-press scaleX stamp", category: "new" },
-  { name: "thread", desc: "Sine-wave Y offsets", category: "new" },
-  { name: "glassReveal", desc: "Backdrop blur evaporates", category: "new" },
-  { name: "wordPop", desc: "Per-word scale from zero", category: "new" },
-  { name: "scanline", desc: "Horizontal slice expand", category: "new" },
-  { name: "chromaShift", desc: "RGB channels collapse", category: "new" },
-  { name: "wordFade", desc: "Per-word cross-dissolve", category: "new" },
+  { name: "rise",        desc: "Smooth upward fade-in"      },
+  { name: "stagger",     desc: "Word-by-word entrance"       },
+  { name: "clip",        desc: "Unmasked left to right"      },
+  { name: "pop",         desc: "Spring scale-in"             },
+  { name: "letters",     desc: "Letter-by-letter slide"      },
+  { name: "blur",        desc: "Emerges from a blur"         },
+  { name: "flip",        desc: "3D perspective rotate"       },
+  { name: "swipe",       desc: "Slides from the right"       },
+  { name: "typewriter",  desc: "Character reveal"            },
+  { name: "bounce",      desc: "Drop with a bounce"          },
+  { name: "velvet",      desc: "Soft skew drift"             },
+  { name: "curtain",     desc: "Per-word upward clip"        },
+  { name: "morph",       desc: "Squash-and-stretch spring"   },
+  { name: "ground",      desc: "Rises from baseline"         },
+  { name: "cascade",     desc: "Diagonal char waterfall"     },
+  { name: "spotlight",   desc: "Letterspace compress-open"   },
+  { name: "ink",         desc: "Gentle scale fade"           },
+  { name: "hinge",       desc: "Rotates from left edge"      },
+  { name: "stretch",     desc: "Horizontal rubber-band"      },
+  { name: "peel",        desc: "Bottom-to-top clip"          },
+  { name: "ripple",      desc: "Elastic scale outward"       },
+  { name: "cinch",       desc: "Chars pinch then snap"       },
+  { name: "tiltrise",    desc: "Rise while untilting"        },
+  { name: "unfurl",      desc: "Expands from center"         },
+  { name: "billboard",   desc: "Y-axis rotation"             },
+  { name: "tectonic",    desc: "Alternating side slam"       },
+  { name: "stratify",    desc: "Z-depth blur flight"         },
+  { name: "orbit",       desc: "Dot grows + rotates"         },
+  { name: "liquid",      desc: "Cross-axis squash spring"    },
+  { name: "noiseFade",   desc: "Signal-lock opacity"         },
+  { name: "slab",        desc: "Print-press scaleX stamp"    },
+  { name: "thread",      desc: "Sine-wave Y offsets"         },
+  { name: "glassReveal", desc: "Backdrop blur evaporates"    },
+  { name: "wordPop",     desc: "Per-word scale from zero"    },
+  { name: "scanline",    desc: "Horizontal slice expand"     },
+  { name: "chromaShift", desc: "RGB channels collapse"       },
+  { name: "wordFade",    desc: "Per-word cross-dissolve"     },
 ] as const;
 
 type AnimName = typeof ANIMATIONS[number]["name"];
 
-const CATEGORY_STYLE = {
-  original: { bg: "rgba(99,87,160,0.07)", border: "rgba(99,87,160,0.2)", text: "#6355a0", label: "original" },
-  modern: { bg: "rgba(13,148,136,0.07)", border: "rgba(13,148,136,0.2)", text: "#0d9488", label: "modern" },
-  new: { bg: "rgba(120,120,140,0.08)", border: "rgba(120,120,140,0.2)", text: "#8a8a9a", label: "new" },
-};
+
+
+const mono    = { fontFamily: "'JetBrains Mono', monospace" } as const;
 
 export default function AnimationGrid() {
   const [active, setActive] = useState<AnimName | null>(null);
-  const [keys, setKeys] = useState<Record<string, number>>({});
+  const [keys,   setKeys]   = useState<Record<string, number>>({});
 
   const preview = useCallback((name: AnimName) => {
     setActive(name);
@@ -60,25 +58,32 @@ export default function AnimationGrid() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Preview strip */}
-      {active && (
+    <div
+      className="overflow-hidden"
+      style={{ border: "1px solid var(--ink-border)", borderRadius: "16px" }}
+    >
+      {/* ── Preview strip ─────────────────────────────────────────────────── */}
+      <div
+        className="relative flex items-center justify-center px-6 py-12 overflow-hidden"
+        style={{
+          background: "var(--ink-surface)",
+          minHeight: "160px",
+          borderBottom: "1px solid var(--ink-border)",
+        }}
+      >
+        {/* Grid line background */}
         <div
-          className="rounded-xl flex items-center justify-center py-10 px-6 relative overflow-hidden"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            background: "var(--ink-surface)",
-            border: "1px solid var(--ink-border)",
-            minHeight: "130px",
+            backgroundImage:
+              "linear-gradient(var(--ink-border) 1px, transparent 1px), linear-gradient(90deg, var(--ink-border) 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+            opacity: 0.5,
           }}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle, rgba(30,20,10,0.06) 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
-          />
-          <div key={`${active}-${keys[active]}`} className="relative">
+        />
+
+        {active ? (
+          <div key={`${active}-${keys[active]}`} className="relative text-center">
             <Typography
               variant="Display"
               font="Bricolage Grotesque"
@@ -90,24 +95,70 @@ export default function AnimationGrid() {
               inkvelle <em>moves</em>
             </Typography>
           </div>
+        ) : (
+          <div className="relative flex flex-col items-center gap-2 select-none">
+            <svg
+              width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+              style={{ color: "var(--ink-border2)" }}
+            >
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            <span className="text-[11px]" style={{ ...mono, color: "var(--ink-muted)" }}>
+              click any animation to preview
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Active label strip ────────────────────────────────────────────── */}
+      {active && (
+        <div
+          className="px-5 py-2.5 flex items-center gap-3"
+          style={{ borderBottom: "1px solid var(--ink-border)", background: "#ffffff" }}
+        >
+          <span className="text-[10px] font-bold uppercase tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>
+            previewing
+          </span>
+          <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-accent)" }}>
+            {active}
+          </code>
+          <button
+            onClick={() => preview(active)}
+            className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest transition-opacity duration-150"
+            style={{ ...mono, color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ink-text)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "var(--ink-muted)"; }}
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+            replay
+          </button>
         </div>
       )}
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-        {ANIMATIONS.map(({ name, desc, category }) => {
-          const s = CATEGORY_STYLE[category];
+      {/* ── Grid ──────────────────────────────────────────────────────────── */}
+      <div
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+        style={{ background: "#ffffff" }}
+      >
+        {ANIMATIONS.map(({ name, desc }, idx) => {
           const isActive = active === name;
+          const totalCols = 5; // lg breakpoint
+          const isLastRow = idx >= ANIMATIONS.length - (ANIMATIONS.length % totalCols || totalCols);
+
           return (
             <button
               key={name}
               onClick={() => preview(name)}
-              className="flex flex-col gap-1 p-3 rounded-xl text-left transition-all duration-150 cursor-pointer"
+              className="flex flex-col gap-1.5 p-4 text-left transition-colors duration-100 cursor-pointer"
               style={{
-                background: isActive ? s.bg : "#ffffff",
-                border: "1px solid",
-                borderColor: isActive ? s.border : "var(--ink-border)",
-                boxShadow: isActive ? "none" : "0 1px 3px rgba(0,0,0,0.04)",
+                background: isActive ? "var(--ink-surface)" : "#ffffff",
+                borderRight: "1px solid var(--ink-border)",
+                borderBottom: "1px solid var(--ink-border)",
+                outline: "none",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "var(--ink-surface)";
@@ -116,26 +167,25 @@ export default function AnimationGrid() {
                 if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "#ffffff";
               }}
             >
-              <div className="flex items-center justify-between gap-1">
-                <code
-                  className="text-xs font-semibold"
-                  style={{ color: isActive ? s.text : "var(--ink-accent)", fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  {name}
-                </code>
-                <span
-                  className="text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wider hidden sm:inline"
-                  style={{
-                    background: s.bg,
-                    color: s.text,
-                    border: `1px solid ${s.border}`,
-                    fontFamily: "'JetBrains Mono', monospace",
-                  }}
-                >
-                  {s.label}
-                </span>
-              </div>
-              <p className="text-xs" style={{ color: "var(--ink-muted)", lineHeight: 1.4 }}>{desc}</p>
+              {/* Name */}
+              <code
+                className="text-[11px] font-bold"
+                style={{
+                  ...mono,
+                  color: isActive ? "var(--ink-text)" : "var(--ink-accent)",
+                  fontWeight: isActive ? 700 : 600,
+                }}
+              >
+                {name}
+              </code>
+
+              {/* Description */}
+              <p
+                className="text-[11px] leading-snug"
+                style={{ color: "var(--ink-muted)", fontFamily: "'Bricolage Grotesque', sans-serif" }}
+              >
+                {desc}
+              </p>
             </button>
           );
         })}

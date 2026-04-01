@@ -520,11 +520,7 @@ export default function Page() {
               className="mt-6 text-base sm:text-lg leading-relaxed max-w-2xl"
               style={{ color: "var(--ink-sub)", animation: "fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both" }}
             >
-              A zero-dependency React + TypeScript typography component with automatic Google Fonts,{" "}
-              <strong style={{ color: "var(--ink-text)", fontWeight: 600 }}>30+ hero animations</strong>,
-              custom{" "}
-              <code style={{ ...mono, color: "var(--ink-accent)", fontSize: "0.85em", background: "rgba(120,120,140,0.09)", padding: "0.1em 0.35em", borderRadius: "4px", border: "1px solid rgba(120,120,140,0.18)" }}>motionConfig</code>
-              , and a direct DOM ref for GSAP or Framer Motion.
+              A zero-dependency React + TypeScript typography component with automatic Google Fonts, 30+ hero animations, custom motionConfig, and a direct DOM ref for GSAP or Framer Motion.
             </p>
 
             {/* CTAs */}
@@ -534,79 +530,28 @@ export default function Page() {
             >
               <a
                 href="#playground"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-opacity duration-200"
-                style={{ ...heading, background: "var(--ink-text)", color: "#ffffff" }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded text-[13px] font-bold transition-opacity duration-200"
+                style={{ ...mono, background: "var(--ink-text)", color: "#ffffff" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "0.85"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "1"; }}
               >
                 Try the playground
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-terminal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 19h8" />
                   <path d="m4 17 6-6-6-6" />
                 </svg>
               </a>
               <a
                 href="#install"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
-                style={{ ...heading, color: "var(--ink-sub)", border: "1px solid var(--ink-border)", background: "transparent" }}
-                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "rgba(120,120,140,0.4)"; el.style.color = "var(--ink-text)"; }}
-                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.borderColor = "var(--ink-border)"; el.style.color = "var(--ink-sub)"; }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded text-[13px] font-bold transition-all duration-200"
+                style={{ ...mono, color: "var(--ink-text)", border: "1px solid var(--ink-border)", background: "transparent" }}
+                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "var(--ink-surface)"; }}
+                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; }}
               >
                 View installation
               </a>
             </div>
-            {/* Feature pills - scrollable on mobile */}
-            <div className="relative mt-12 w-full">
-              <div
-                className="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-4 -mb-4 scrollbar-hide"
-                style={{ 
-                  animation: "fadeUp 0.8s ease 0.45s both",
-                  WebkitMaskImage: "linear-gradient(to right, black 85%, transparent 100%)"
-                }}
-              >
-                {[
-                  "30+ animations", "Google Fonts auto-inject", "Custom motionConfig",
-                  "motionRef (GSAP / Framer)", "Italic accent", "SSR-safe",
-                  "TypeScript", "Zero dependencies",
-                ].map((f) => (
-                  <div
-                    key={f}
-                    className="group shrink-0 relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all duration-300 cursor-default select-none overflow-hidden"
-                    style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      background: "rgba(255, 255, 255, 0.4)",
-                      color: "var(--ink-sub)",
-                      border: "1px solid rgba(120, 120, 140, 0.12)",
-                      boxShadow: "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)",
-                      backdropFilter: "blur(8px)",
-                      WebkitBackdropFilter: "blur(8px)",
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget as HTMLDivElement;
-                      el.style.borderColor = "rgba(120, 120, 140, 0.3)";
-                      el.style.color = "var(--ink-text)";
-                      el.style.background = "rgba(255, 255, 255, 0.8)";
-                      el.style.transform = "translateY(-1px)";
-                      el.style.boxShadow = "0 4px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget as HTMLDivElement;
-                      el.style.borderColor = "rgba(120, 120, 140, 0.12)";
-                      el.style.color = "var(--ink-sub)";
-                      el.style.background = "rgba(255, 255, 255, 0.4)";
-                      el.style.transform = "translateY(0)";
-                      el.style.boxShadow = "0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8)";
-                    }}
-                  >
-                    <span 
-                      className="w-1 h-1 rounded-full opacity-40 transition-all duration-300 group-hover:scale-125 group-hover:opacity-100" 
-                      style={{ background: "var(--ink-accent)" }} 
-                    />
-                    {f}
-                  </div>
-                ))}
-              </div>
-            </div>
+
           </section>
 
           {/* ── Divider ─────────────────────────────────────────────────────── */}
@@ -704,46 +649,46 @@ export default function Page() {
 
             {/* Live comparison */}
             <div
-              className="rounded-2xl overflow-hidden mb-8 grid sm:grid-cols-2"
-              style={{ border: "1px solid var(--ink-border)" }}
+              className="overflow-hidden mb-8 grid sm:grid-cols-2"
+              style={{ border: "1px solid var(--ink-border)", borderRadius: "12px", background: "#ffffff" }}
             >
               <div
                 className="p-8 flex flex-col gap-3"
-                style={{ background: "var(--ink-surface)", borderRight: "1px solid var(--ink-border)" }}
+                style={{ borderRight: "1px solid var(--ink-border)" }}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <span
-                    className="text-xs px-2 py-0.5 rounded-md"
-                    style={{ ...mono, background: "rgba(0,0,0,0.05)", color: "var(--ink-muted)", border: "1px solid var(--ink-border)" }}
+                    className="text-[10px] font-bold px-2 py-0.5"
+                    style={{ ...mono, background: "var(--ink-surface)", color: "var(--ink-muted)", border: "1px solid var(--ink-border)" }}
                   >
                     italic={"{false}"}
                   </span>
-                  <span className="text-xs" style={{ color: "var(--ink-muted)" }}>default</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>default</span>
                 </div>
                 <div style={{ ...heading, fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "var(--ink-text)", fontWeight: 800, lineHeight: 1.1 }}>
                   Build with <em style={{ fontStyle: "normal" }}>precision</em>
                 </div>
-                <p className="text-xs" style={{ ...mono, color: "var(--ink-muted)" }}>
+                <p className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-muted)" }}>
                   &lt;em&gt; inherits heading font
                 </p>
               </div>
 
-              <div className="p-8 flex flex-col gap-3" style={{ background: "#ffffff" }}>
+              <div className="p-8 flex flex-col gap-3" style={{ background: "var(--ink-surface)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span
-                    className="text-xs px-2 py-0.5 rounded-md"
-                    style={{ ...mono, background: "rgba(120,120,140,0.09)", color: "var(--ink-accent)", border: "1px solid rgba(120,120,140,0.22)" }}
+                    className="text-[10px] font-bold px-2 py-0.5"
+                    style={{ ...mono, background: "rgba(13,148,136,0.08)", color: "#0d9488", border: "1px solid rgba(13,148,136,0.25)" }}
                   >
                     italic={"{true}"}
                   </span>
                 </div>
                 <div style={{ ...heading, fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "var(--ink-text)", fontWeight: 800, lineHeight: 1.1 }}>
                   Build with{" "}
-                  <em style={{ fontStyle: "italic", fontFamily: "'Instrument Serif', Georgia, serif", color: "var(--ink-accent)", fontWeight: 400 }}>
+                  <em style={{ fontStyle: "italic", fontFamily: "'Instrument Serif', Georgia, serif", color: "#0d9488", fontWeight: 400 }}>
                     precision
                   </em>
                 </div>
-                <p className="text-xs" style={{ ...mono, color: "var(--ink-muted)" }}>
+                <p className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-muted)" }}>
                   &lt;em&gt; → Instrument Serif + accentColor
                 </p>
               </div>
@@ -759,11 +704,11 @@ export default function Page() {
             />
 
             <div
-              className="rounded-2xl overflow-hidden mb-8"
-              style={{ border: "1px solid var(--ink-border)", background: "#ffffff" }}
+              className="overflow-hidden mb-8"
+              style={{ border: "1px solid var(--ink-border)", background: "#ffffff", borderRadius: "12px" }}
             >
               <div className="p-6 flex flex-col gap-2" style={{ borderBottom: "1px solid var(--ink-border)" }}>
-                <code className="text-xs" style={{ ...mono, color: "var(--ink-muted)" }}>variant=&quot;H2&quot; truncate</code>
+                <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-sub)" }}>variant=&quot;H2&quot; truncate</code>
                 <div
                   className="overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"
                   style={{ ...heading, color: "var(--ink-text)", maxWidth: "420px" }}
@@ -771,8 +716,8 @@ export default function Page() {
                   This very long title will be cut off with an ellipsis
                 </div>
               </div>
-              <div className="p-6 flex flex-col gap-2">
-                <code className="text-xs" style={{ ...mono, color: "var(--ink-muted)" }}>variant=&quot;Body&quot; maxLines={"{3}"}</code>
+              <div className="p-6 flex flex-col gap-2" style={{ background: "var(--ink-surface)" }}>
+                <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-sub)" }}>variant=&quot;Body&quot; maxLines={"{3}"}</code>
                 <div
                   style={{
                     color: "var(--ink-sub)", fontSize: "0.95rem", lineHeight: 1.65,
@@ -808,29 +753,29 @@ export default function Page() {
 
             {/* Priority table */}
             <h3 className="text-lg font-bold mt-10 mb-4" style={{ ...heading, color: "var(--ink-text)" }}>Priority order</h3>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--ink-border)" }}>
+            <div className="overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "12px" }}>
               {[
-                { rank: "1", label: "Explicit prop", desc: "Highest priority. Always wins.", color: "#5a6a9a" },
-                { rank: "2", label: "TypographyProvider theme", desc: "Fallback for all Typography inside the provider.", color: "#6355a0" },
-                { rank: "3", label: "Built-in default", desc: "Lowest priority — the component's own sensible defaults.", color: "var(--ink-muted)" },
+                { rank: "1", label: "Explicit prop", desc: "Highest priority. Always wins.", color: "var(--ink-accent)" },
+                { rank: "2", label: "TypographyProvider theme", desc: "Fallback for all Typography inside the provider.", color: "var(--ink-text)" },
+                { rank: "3", label: "Built-in default", desc: "Lowest priority — the component's own sensible defaults.", color: "var(--ink-sub)" },
               ].map((row, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-4 px-5 py-4"
+                  className="flex items-start gap-4 px-5 py-3"
                   style={{
-                    background: i % 2 === 0 ? "#ffffff" : "var(--ink-surface)",
+                    background: "#ffffff",
                     borderBottom: i < 2 ? "1px solid var(--ink-border)" : "none",
                   }}
                 >
                   <span
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
-                    style={{ ...mono, background: `${row.color}14`, color: row.color, border: `1px solid ${row.color}33` }}
+                    className="w-5 h-5 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5"
+                    style={{ ...mono, color: row.color, border: `1px solid ${row.color}` }}
                   >
                     {row.rank}
                   </span>
                   <div className="flex flex-col gap-0.5">
-                    <code className="text-sm font-semibold" style={{ ...mono, color: row.color }}>{row.label}</code>
-                    <span className="text-sm" style={{ color: "var(--ink-sub)" }}>{row.desc}</span>
+                    <code className="text-[11px] font-bold" style={{ ...mono, color: row.color }}>{row.label}</code>
+                    <span className="text-[13px] leading-relaxed tracking-wide" style={{ ...heading, color: "var(--ink-sub)" }}>{row.desc}</span>
                   </div>
                 </div>
               ))}
@@ -856,36 +801,38 @@ export default function Page() {
             </div>
             <CodeBlock code={NEXTJS_PAGE_CODE} language="tsx" />
 
-            <div className="mt-8 rounded-xl overflow-hidden" style={{ border: "1px solid var(--ink-border)" }}>
+            <div className="mt-8 overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "12px" }}>
               <div
-                className="hidden sm:grid px-5 py-3 text-xs uppercase tracking-widest font-medium"
-                style={{ gridTemplateColumns: "1fr 1fr 1fr", background: "var(--ink-surface2)", color: "var(--ink-muted)", borderBottom: "1px solid var(--ink-border)", ...mono }}
+                className="hidden sm:grid px-5 py-3"
+                style={{ gridTemplateColumns: "10rem 11rem 12rem", background: "var(--ink-surface)", borderBottom: "1px solid var(--ink-border)" }}
               >
-                <span>Prop</span><span>Server</span><span>Client</span>
+                {["prop", "server", "client"].map((h) =>(
+                   <span key={h} className="text-[10px] uppercase font-bold tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>{h}</span>
+                ))}
               </div>
               {[
-                { prop: "variant, font, color, align, truncate, maxLines", server: "Inline styles in HTML", client: "Hydrated" },
-                { prop: "animation", server: "Class name in HTML", client: "Keyframe injected, plays" },
-                { prop: "motionConfig", server: "Raw HTML, split spans present", client: "Animation applied" },
-                { prop: "motionRef", server: "Plain HTML", client: "Callback fires" },
-                { prop: "italic / accentColor", server: "Inline styles on <em>", client: "No flash on hydration" },
+                { prop: "variant, font, color, align, truncate, maxLines", server: "Inline styles in HTML", client: "Hydrated", highlight: false },
+                { prop: "animation", server: "Class name in HTML", client: "Keyframe injected, plays", highlight: true },
+                { prop: "motionConfig", server: "Raw HTML, split spans present", client: "Animation applied", highlight: true },
+                { prop: "motionRef", server: "Plain HTML", client: "Callback fires", highlight: true },
+                { prop: "italic / accentColor", server: "Inline styles on <em>", client: "No flash on hydration", highlight: false },
               ].map((row, i, arr) => (
                 <div
                   key={i}
-                  className="flex flex-col sm:grid px-5 py-4 sm:py-3 items-start gap-3 sm:gap-4 text-xs"
-                  style={{ gridTemplateColumns: "1fr 1fr 1fr", background: i % 2 === 0 ? "#ffffff" : "var(--ink-surface)", borderBottom: i < arr.length - 1 ? "1px solid var(--ink-border)" : "none", ...mono }}
+                  className="flex flex-col sm:grid px-5 py-4 items-start gap-3 sm:gap-4"
+                  style={{ gridTemplateColumns: "10rem 11rem 12rem", background: "#ffffff", borderBottom: i < arr.length - 1 ? "1px solid var(--ink-border)" : "none" }}
                 >
-                  <div className="flex items-center justify-between w-full sm:block">
+                  <div className="flex items-center justify-between w-full sm:block pr-6">
                     <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Prop</span>
-                    <code style={{ color: "var(--ink-accent)" }}>{row.prop}</code>
+                    <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-text)", wordBreak: "break-word" as const }}>{row.prop}</code>
                   </div>
-                  <div className="flex items-center justify-between w-full sm:block">
+                  <div className="flex items-center justify-between w-full sm:block text-[13px]" style={{ ...heading, color: "var(--ink-sub)", paddingTop: "0.1rem" }}>
                     <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Server</span>
-                    <span style={{ color: "var(--ink-sub)" }}>{row.server}</span>
+                    <span>{row.server}</span>
                   </div>
-                  <div className="flex items-center justify-between w-full sm:block">
+                  <div className="flex items-center justify-between w-full sm:block text-[13px] font-medium" style={{ ...heading, color: row.highlight ? "#0d9488" : "var(--ink-text)", paddingTop: "0.1rem" }}>
                     <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Client</span>
-                    <span style={{ color: "var(--ink-sub)" }}>{row.client}</span>
+                    <span>{row.client}</span>
                   </div>
                 </div>
               ))}
@@ -904,45 +851,40 @@ export default function Page() {
               title="Recommended font pairings"
               desc="Opinionated picks for hero headings. Pass the name directly to the font prop — the Google Font link is injected automatically."
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "16px" }}>
               {[
-                { font: "Bricolage Grotesque", style: "Bold sans", use: "Startups, SaaS, modern brand", color: "#5a6a9a" },
-                { font: "Syne", style: "Geometric", use: "Creative, portfolio, agency", color: "#6355a0" },
+                { font: "Bricolage Grotesque", style: "Bold sans", use: "Startups, SaaS, modern brand", color: "#2563eb" },
+                { font: "Syne", style: "Geometric", use: "Creative, portfolio, agency", color: "#6366f1" },
                 { font: "Fraunces", style: "Serif", use: "Editorial, luxury, fashion", color: "#0d9488" },
-                { font: "Bebas Neue", style: "Condensed", use: "Sports, bold campaigns", color: "#e11d48" },
-                { font: "Playfair Display", style: "Serif", use: "Journalism, books, culture", color: "#8a8a9a" },
-                { font: "Outfit", style: "Clean sans", use: "Apps, dashboards, fintech", color: "#6366f1" },
-              ].map(({ font, style, use, color }) => (
+                { font: "Bebas Neue", style: "Condensed", use: "Sports, bold campaigns", color: "#db2777" },
+                { font: "Playfair Display", style: "Serif", use: "Journalism, books, culture", color: "#7c3aed" },
+                { font: "Outfit", style: "Clean sans", use: "Apps, dashboards, fintech", color: "#ea580c" },
+              ].map(({ font, style, use, color }, i) => (
                 <div
                   key={font}
-                  className="p-5 rounded-xl border cursor-default transition-all duration-200"
-                  style={{ background: "#ffffff", borderColor: "var(--ink-border)", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}
-                  onMouseEnter={(e) => {
-                    const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = `${color}44`;
-                    el.style.boxShadow = `0 4px 16px ${color}18`;
-                    el.style.background = `${color}05`;
+                  className="p-6 transition-colors duration-100 flex flex-col"
+                  style={{
+                    background: "#ffffff",
+                    borderBottom: i < 3 || (i >= 3 && i < 5) ? "1px solid var(--ink-border)" : "none",
+                    borderRight: (i + 1) % 3 !== 0 ? "1px solid var(--ink-border)" : "none"
                   }}
-                  onMouseLeave={(e) => {
-                    const el = e.currentTarget as HTMLDivElement;
-                    el.style.borderColor = "var(--ink-border)";
-                    el.style.boxShadow = "0 1px 4px rgba(0,0,0,0.05)";
-                    el.style.background = "#ffffff";
-                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "var(--ink-surface)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#ffffff"; }}
                 >
-                  <div className="text-3xl font-bold mb-3" style={{ fontFamily: `'${font}', sans-serif`, color, lineHeight: 1 }}>
+                  <div className="text-[2rem] font-bold mb-4" style={{ fontFamily: `'${font}', sans-serif`, color, lineHeight: 1 }}>
                     Aa
                   </div>
-                  <code className="text-xs font-semibold block mb-2" style={{ ...mono, color: "var(--ink-text)" }}>
-                    {font}
-                  </code>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ ...mono, background: `${color}12`, color, border: `1px solid ${color}2a` }}
-                  >
-                    {style}
-                  </span>
-                  <p className="text-xs mt-2.5" style={{ color: "var(--ink-muted)" }}>{use}</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-text)" }}>
+                      {font}
+                    </code>
+                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>
+                      {style}
+                    </span>
+                  </div>
+                  <p className="text-[13px] leading-relaxed mt-auto" style={{ ...heading, color: "var(--ink-sub)" }}>
+                    {use}
+                  </p>
                 </div>
               ))}
             </div>

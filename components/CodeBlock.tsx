@@ -52,13 +52,13 @@ function tokenize(code: string): React.ReactNode[] {
       continue;
     }
     // JSX Tag Start/End parsing snippet
-    if (code[i] === "<" && /[a-zA-Z/]/.test(code[i+1] || "")) {
+    if (code[i] === "<" && /[a-zA-Z/]/.test(code[i + 1] || "")) {
       let j = i + 1;
       if (code[j] === "/") j++;
       const startName = j;
       while (j < code.length && /[a-zA-Z0-9_$]/.test(code[j])) j++;
       const tagName = code.slice(startName, j);
-      
+
       if (tagName) {
         nodes.push(<span key={key++} style={{ color: "#94A3B8" }}>{code.slice(i, startName)}</span>);
         const isComponent = /^[A-Z]/.test(tagName);
@@ -141,7 +141,7 @@ export default function CodeBlock({ code, language = "tsx" }: CodeBlockProps) {
           <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]" />
           <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]" />
         </div>
-        
+
         <span
           className="text-xs font-semibold tracking-wider uppercase ml-4 mr-auto"
           style={{ color: "rgba(255,255,255,0.5)", fontFamily: "system-ui, sans-serif" }}
