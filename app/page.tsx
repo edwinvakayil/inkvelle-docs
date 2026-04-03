@@ -26,23 +26,6 @@ const mono = { fontFamily: "'JetBrains Mono', monospace" } as const;
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function ControlLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      style={{
-        ...mono,
-        display: "block",
-        fontSize: "10px",
-        color: "#9ca3af",
-        marginBottom: "10px",
-        letterSpacing: "0.01em",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
 function PillButton({
   active,
   onClick,
@@ -156,7 +139,7 @@ export default function HeroPlayground() {
         <div key={key} style={{ textAlign: "center" }}>
           {isMounted && (
             <Typography
-              variant={variant as any}
+              variant={variant as "Display" | "H1" | "H2" | "H3" | "H4" | "H5" | "H6" | "Subheading" | "Overline" | "Body" | "Label" | "Caption"}
               font={font}
               animation={animation}
               italic={italic}

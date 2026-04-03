@@ -26,23 +26,6 @@ const mono = { fontFamily: "'JetBrains Mono', monospace" } as const;
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function ControlLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      style={{
-        ...mono,
-        display: "block",
-        fontSize: "11px",
-        color: "#9ca3af",
-        marginBottom: "10px",
-        letterSpacing: "0.01em",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
 function PillButton({
   active,
   onClick,
