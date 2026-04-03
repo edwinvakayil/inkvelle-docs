@@ -18,79 +18,37 @@ const VARIANTS = [
 
 type VariantName = typeof VARIANTS[number]["variant"];
 
-function getColSpan(variant: VariantName) {
-  switch (variant) {
-    case "Display":
-    case "H1":
-    case "Body":
-      return "col-span-1 sm:col-span-2 lg:col-span-4";
-    case "H2":
-    case "H3":
-    case "Caption":
-      return "col-span-1 sm:col-span-2 lg:col-span-2";
-    default:
-      return "col-span-1 sm:col-span-1 lg:col-span-1";
-  }
-}
-
 export default function VariantShowcase() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full grid-flow-row-dense">
+    <div className="w-full flex flex-col border-t border-[#f0f0f0]">
       {VARIANTS.map(({ variant, tag, role, sample }) => (
         <div
           key={variant}
-          className={`${getColSpan(variant)} flex flex-col justify-between gap-8 p-6 lg:p-7 rounded-[1.5rem] transition-transform duration-300 hover:scale-[1.01]`}
-          style={{
-            background: "var(--ink-surface)",
-            border: "1px solid var(--ink-border)",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.01)"
-          }}
+          className="flex flex-col sm:flex-row items-baseline gap-4 sm:gap-12 py-10 border-b border-[#f0f0f0]"
         >
-          {/* Header */}
-          <div className="flex justify-between items-start gap-4">
-            <span 
-              className="text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-[6px]"
-              style={{
-                color: "var(--ink-accent)",
-                background: "rgba(120,120,140,0.1)",
-                fontFamily: "'JetBrains Mono', monospace"
-              }}
-            >
-              {variant}
-            </span>
-            <span 
-              className="text-[10px] font-semibold opacity-50 uppercase tracking-wider"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              {`<${tag}>`}
+          {/* Specs / Meta */}
+          <div className="w-full sm:w-[220px] shrink-0 flex flex-col gap-1.5">
+            <div className="flex items-center gap-2.5">
+              <span className="text-[11px] font-bold text-[#111111]">
+                {variant}
+              </span>
+              <span className="text-[10px] font-mono text-[#999999] px-1.5 py-0.5 rounded bg-[#f5f5f5]">
+                {`<${tag}>`}
+              </span>
+            </div>
+            <span className="text-[11px] text-[#666666] leading-relaxed pr-4">
+              {role}
             </span>
           </div>
 
-          {/* Sample Text */}
-          <div className="w-full flex items-center min-h-[40px] overflow-hidden">
+          {/* Rendered Sample */}
+          <div className="flex-1 w-full min-w-0 flex items-center">
             <Typography
               variant={variant as VariantName}
-              font="Bricolage Grotesque"
-              color="var(--ink-text)"
+              font="Inter"
             >
               {sample}
             </Typography>
-          </div>
-
-          {/* Footer Metadata */}
-          <div className="pt-4 border-t flex items-center justify-between" style={{ borderColor: "rgba(120,120,140,0.15)" }}>
-            <span 
-              className="text-[11px] font-medium opacity-80"
-              style={{ color: "var(--ink-text)" }}
-            >
-              {role}
-            </span>
-            {variant === "Body" && (
-              <span style={{ fontSize: "14px", opacity: 0.3, color: "var(--ink-text)" }}>¶</span>
-            )}
-            {(variant.startsWith("H") || variant === "Display") && (
-              <span style={{ fontSize: "14px", opacity: 0.3, color: "var(--ink-text)", fontFamily: "'JetBrains Mono', monospace" }}>#</span>
-            )}
           </div>
         </div>
       ))}

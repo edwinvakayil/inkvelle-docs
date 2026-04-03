@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-const words = ["Craft", "that", "moves."];
+const words = ["Build", "with", "intention"];
 const accents = [false, false, true];
 
 export default function HeroHeadline() {

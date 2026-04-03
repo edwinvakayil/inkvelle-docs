@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ─── Google Fonts ────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
 
 /* ─── Design tokens — LIGHT ───────────────────────────────────────────────── */
 :root {
@@ -34,7 +34,7 @@ html {
 body {
   background-color: var(--ink-bg);
   color: var(--ink-text);
-  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  font-family: 'Quicksand', system-ui, sans-serif;
   margin: 0;
   line-height: 1.6;
 }

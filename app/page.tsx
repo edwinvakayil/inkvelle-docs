@@ -1,1017 +1,428 @@
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import HeroHeadline from "@/components/HeroHeadline";
-import HeroPlayground from "@/components/HeroPlayground";
-import VariantShowcase from "@/components/VariantShowcase";
-import AnimationGrid from "@/components/AnimationGrid";
-import MotionConfigDemo from "@/components/MotionConfigDemo";
-import PropTable from "@/components/PropTable";
-import CodeBlock from "@/components/CodeBlock";
-import SectionHeader from "@/components/SectionHeader";
-import ScrollToTop from "@/components/ScrollToTop";
-
-const VERSION = "2.0.0";
-
-// ─── Code snippets ────────────────────────────────────────────────────────────
-
-const INSTALL_CODE = `npm install inkvelle
-# or
-yarn add inkvelle`;
-
-const QUICKSTART_CODE = `import { Typography, preloadFonts } from "inkvelle";
-
-// Pre-load fonts at app root to avoid FOUT
-preloadFonts(["Bricolage Grotesque", "Instrument Serif"]);
-
-export default function Hero() {
-  return (
-    <Typography
-      variant="Display"
-      font="Bricolage Grotesque"
-      animation="rise"
-      italic={true}
-      accentColor="#8a8a9a"
-    >
-      Design with <em>intention</em>
-    </Typography>
-  );
-}`;
-
-const VARIANTS_CODE = `<Typography variant="Display" font="Fraunces">Hero heading</Typography>
-<Typography variant="H1">Page title</Typography>
-<Typography variant="H2">Section heading</Typography>
-<Typography variant="H3">Sub-section heading</Typography>
-<Typography variant="H4">Card heading</Typography>
-<Typography variant="Overline" color="#6366f1">Category label</Typography>
-<Typography variant="Body" font="Lora">Body copy for reading at length.</Typography>
-<Typography variant="Label">Email address</Typography>
-<Typography variant="Caption" color="#888">Fig. 1 — caption text</Typography>`;
-
-const ANIMATION_CODE = `// Built-in entrance animations (Display / H1 only)
-<Typography variant="Display" animation="rise">    Smooth rise      </Typography>
-<Typography variant="Display" animation="stagger"> Word by word     </Typography>
-<Typography variant="Display" animation="clip">    Left to right    </Typography>
-<Typography variant="Display" animation="pop">     Spring pop       </Typography>
-<Typography variant="Display" animation="letters"> Letter by letter </Typography>
-<Typography variant="Display" animation="blur">    Focus in         </Typography>
-<Typography variant="Display" animation="flip">    3D flip          </Typography>
-<Typography variant="Display" animation="bounce">  Bounce drop      </Typography>
-<Typography variant="Display" animation="velvet">  Velvet drift     </Typography>
-<Typography variant="Display" animation="glassReveal"> Glass reveal  </Typography>`;
-
-const MOTION_PRIORITY_CODE = `// Priority order: motionRef > motionConfig > animation > no animation
-//
-// motionRef    — you own the DOM, maximum control
-// motionConfig — your keyframe, component handles splitting + stagger
-// animation    — built-in preset (Display / H1 only)`;
-
-const MOTION_CONFIG_CODE = `import { Typography, type MotionConfig } from "inkvelle";
-
-// Whole-element custom keyframe — works on any variant
-<Typography
-  variant="H2"
-  font="Syne"
-  motionConfig={{
-    keyframes: \`from { opacity: 0; transform: translateY(24px) skewX(6deg); }
-                to   { opacity: 1; transform: none; }\`,
-    duration: "0.8s",
-    easing:   "cubic-bezier(0.16, 1, 0.3, 1)",
-    delay:    "0.1s",
-  }}
->
-  Section heading
-</Typography>
-
-// Per-word stagger
-<Typography
-  variant="Display"
-  font="Bricolage Grotesque"
-  motionConfig={{
-    keyframes:    \`from { opacity: 0; transform: translateX(-20px) rotate(-4deg); }
-                  to   { opacity: 1; transform: none; }\`,
-    duration:     "0.65s",
-    split:        "words",
-    staggerDelay: 0.09,
-  }}
->
-  Design with <em>intention</em>
-</Typography>
-
-// Per-character stagger
-<Typography
-  variant="Display"
-  motionConfig={{
-    keyframes:    \`from { opacity: 0; transform: scaleY(0) translateY(10px); }
-                  to   { opacity: 1; transform: none; }\`,
-    duration:     "0.5s",
-    split:        "chars",
-    staggerDelay: 0.035,
-  }}
->
-  Motion
-</Typography>`;
-
-const MOTION_REF_CODE = `// motionRef — direct DOM access. Takes priority over animation + motionConfig.
-
-// Web Animations API
-<Typography
-  variant="Display"
-  font="Bricolage Grotesque"
-  motionRef={(el) => {
-    if (!el) return;
-    el.animate(
-      [{ opacity: 0, transform: "translateY(32px)" }, { opacity: 1, transform: "none" }],
-      { duration: 900, easing: "cubic-bezier(0.16,1,0.3,1)", fill: "both" }
-    );
-  }}
->
-  Full control
-</Typography>
-
-// GSAP
-<Typography
-  variant="H1"
-  motionRef={(el) => {
-    if (!el) return;
-    gsap.from(el, { opacity: 0, y: 40, duration: 0.9, ease: "power3.out" });
-  }}
->
-  GSAP powered
-</Typography>`;
-
-const ITALIC_CODE = `// italic OFF (default) — <em> inherits the heading font
-<Typography variant="Display" font="Bricolage Grotesque">
-  Build with <em>precision</em>
-</Typography>
-
-// italic ON — <em> renders in Instrument Serif italic
-<Typography variant="Display" font="Bricolage Grotesque" italic>
-  Build with <em>precision</em>
-</Typography>
-
-// Custom accent color
-<Typography variant="H1" font="Syne" italic accentColor="#6366f1">
-  Crafted with <em>care</em>
-</Typography>`;
-
-const TRUNCATE_CODE = `// Single line with ellipsis
-<Typography variant="H2" truncate>
-  This very long title will be cut off with an ellipsis
-</Typography>
-
-// Clamp to N lines
-<Typography variant="Body" maxLines={3}>
-  A long paragraph clamped to exactly three lines...
-</Typography>`;
-
-const PROVIDER_BASIC_CODE = `import { TypographyProvider, Typography } from "inkvelle";
-
-export default function App() {
-  return (
-    <TypographyProvider
-      theme={{
-        font:        "Bricolage Grotesque",
-        accentColor: "#6366f1",
-        italic:      true,
-        animation:   "rise",
-        color:       "#1a1a1a",
-      }}
-    >
-      <Typography variant="Display">
-        Build with <em>intention</em>
-      </Typography>
-      <Typography variant="H1" animation="clip">
-        Another hero heading
-      </Typography>
-      <Typography variant="Display" italic={false}>
-        No serif accent here
-      </Typography>
-    </TypographyProvider>
-  );
-}`;
-
-const PROVIDER_NESTING_CODE = `<TypographyProvider theme={{ font: "Bricolage Grotesque", color: "#1a1a1a" }}>
-  <TypographyProvider theme={{ accentColor: "#c8b89a", color: "#f5f0e8" }}>
-    <HeroSection />
-  </TypographyProvider>
-  <TypographyProvider theme={{ accentColor: "#6366f1", color: "#1a1a1a" }}>
-    <ContentSection />
-  </TypographyProvider>
-</TypographyProvider>`;
-
-const NEXTJS_LAYOUT_CODE = `// app/layout.tsx
-import { TypographyProvider } from "inkvelle";
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <TypographyProvider theme={{ font: "Bricolage Grotesque", accentColor: "#6366f1" }}>
-          {children}
-        </TypographyProvider>
-      </body>
-    </html>
-  );
-}`;
-
-const NEXTJS_PAGES_CODE = `// pages/_app.tsx
-import { TypographyProvider } from "inkvelle";
-import type { AppProps } from "next/app";
-
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <TypographyProvider theme={{ font: "Syne" }}>
-      <Component {...pageProps} />
-    </TypographyProvider>
-  );
-}`;
-
-const NEXTJS_PAGE_CODE = `// app/page.tsx — Server Component
+import { useState, useCallback, useEffect } from "react";
 import { Typography } from "inkvelle";
 
-export default function Page() {
-  return (
-    <Typography variant="Display" animation="rise">
-      Renders on the server, <em>animates</em> on the client
-    </Typography>
-  );
-}`;
+const FONTS = [
+  "Inter", "Fraunces", "Playfair Display", "Outfit", "DM Sans", "Lora",
+];
 
-const PRELOAD_CODE = `import { preloadFonts } from "inkvelle";
-
-// Call once at the root of your app to avoid FOUT
-preloadFonts(["Bricolage Grotesque", "Instrument Serif", "DM Sans"]);`;
-
-// ─── Nav ─────────────────────────────────────────────────────────────────────
-
-const NAV_ITEMS = [
-  { id: "playground", label: "Playground" },
-  { id: "variants", label: "Variants" },
-  { id: "animations", label: "Animations" },
-  { id: "motion", label: "Custom motion" },
-  { id: "italic", label: "Italic" },
-  { id: "provider", label: "Provider" },
-  { id: "ssr", label: "SSR" },
-  { id: "props", label: "Props" },
+const ANIMATIONS = [
+  "rise", "velvet", "curtain", "ground", "cascade",
+  "hinge", "stretch", "unfurl", "slab", "stratify",
+  "scanline", "chromaShift", "typewriter", "cinch",
+  "liquid", "thread", "orbit"
 ] as const;
 
-type NavId = typeof NAV_ITEMS[number]["id"];
+type HeroAnimation = typeof ANIMATIONS[number];
 
-// ─── Shared inline styles ─────────────────────────────────────────────────────
+const ACCENT_COLORS = [
+  { label: "Indigo", value: "#6366f1" },
+  { label: "Rose", value: "#e11d48" },
+  { label: "Teal", value: "#0d9488" },
+  { label: "Violet", value: "#7c3aed" },
+];
 
 const mono = { fontFamily: "'JetBrains Mono', monospace" } as const;
-const heading = { fontFamily: "'Bricolage Grotesque', sans-serif" } as const;
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Sub-components ────────────────────────────────────────────────────────────
 
-export default function Page() {
-  const [navActive, setNavActive] = useState<NavId | "">("");
-  const [mobileOpen, setMobileOpen] = useState(false);
+function ControlLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        ...mono,
+        display: "block",
+        fontSize: "10px",
+        color: "#9ca3af",
+        marginBottom: "10px",
+        letterSpacing: "0.01em",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function PillButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        ...mono,
+        padding: "3px 10px",
+        borderRadius: "4px",
+        fontSize: "11px",
+        cursor: "pointer",
+        transition: "all 0.12s ease",
+        background: active ? "#1c1c1c" : "transparent",
+        color: active ? "#ffffff" : "#6b7280",
+        border: `1px solid ${active ? "#1c1c1c" : "#e5e7eb"}`,
+        fontWeight: active ? 500 : 400,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ─── Main component ────────────────────────────────────────────────────────────
+
+export default function HeroPlayground() {
+  const [font, setFont] = useState("Fraunces");
+  const [animation, setAnimation] = useState<HeroAnimation>("cascade");
+  const [italic, setItalic] = useState(true);
+  const [accentColor, setAccent] = useState("#e11d48");
+  const [variant, setVariant] = useState("Display");
+  const [text, setText] = useState("Inkvelle meets motion");
+  const [isMounted, setIsMounted] = useState(false);
+  const [key, setKey] = useState(0);
+
+  const replay = useCallback(() => setKey((k) => k + 1), []);
 
   useEffect(() => {
-    const SLACK = 90;
-    const playground = document.getElementById("playground");
-    const hasReached = () => playground ? window.scrollY >= playground.offsetTop - SLACK : false;
+    setIsMounted(true);
+    const timer = setTimeout(replay, 150);
+    return () => clearTimeout(timer);
+  }, [replay]);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!hasReached()) { setNavActive(""); return; }
-        entries.forEach((e) => { if (e.isIntersecting) setNavActive(e.target.id as NavId); });
-      },
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
-    );
-    NAV_ITEMS.forEach(({ id }) => { const el = document.getElementById(id); if (el) observer.observe(el); });
-    const onScroll = () => { if (!hasReached()) setNavActive(""); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => { observer.disconnect(); window.removeEventListener("scroll", onScroll); };
-  }, []);
+  const words = text.trim().split(/\s+/);
+  const leadingWords = words.slice(0, -1).join(" ");
+  const lastWord = words[words.length - 1];
+
 
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+    <div style={{ background: "#ffffff", minHeight: "100vh", padding: "48px 24px", maxWidth: "860px", margin: "0 auto" }}>
 
-      <header className="fixed top-0 sm:top-5 left-0 right-0 z-50 flex flex-col items-center px-4 md:px-6 pointer-events-none">
-
-        {/* Floating Pill Container */}
-        <div
-          className="pointer-events-auto w-full max-w-[1100px] flex items-center justify-between px-3 py-2.5 sm:py-2 mt-4 sm:mt-0 rounded-2xl sm:rounded-[2rem] shadow-lg transition-all duration-300"
-          style={{
-            background: "rgba(255, 255, 255, 0.75)",
-            backdropFilter: "blur(24px) saturate(150%)",
-            WebkitBackdropFilter: "blur(24px) saturate(150%)",
-            border: "1px solid rgba(120, 120, 140, 0.15)",
-            boxShadow: "0 10px 40px -10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)",
-          }}
-        >
-          {/* Left Group: Logo + Desktop Nav */}
-          <div className="flex items-center gap-4 xl:gap-12 pl-2 overflow-hidden">
-            {/* Logo */}
-            <Link href="/" className="flex flex-shrink-0 items-center gap-2 group min-w-0">
-              <span
-                className="text-sm font-extrabold tracking-tight transition-opacity duration-200 group-hover:opacity-70 flex-shrink-0"
-                style={{ ...mono, color: "var(--ink-text)" }}
-              >
-                inkvelle
-              </span>
-              <span
-                className="hidden sm:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: "var(--ink-muted)",
-                }}
-              >
-                v{VERSION}
-              </span>
-            </Link>
-
-            {/* Desktop nav */}
-            <nav className="hidden lg:flex items-center gap-1.5">
-              {NAV_ITEMS.map(({ id, label }) => {
-                const isActive = navActive === id;
-                return (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    className="px-2.5 py-1.5 text-[13px] font-bold transition-all duration-300 ease-out relative whitespace-nowrap"
-                    style={{
-                      color: isActive ? "var(--ink-accent)" : "var(--ink-sub)",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "var(--ink-text)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "var(--ink-sub)";
-                    }}
-                  >
-                    {isActive && (
-                      <span
-                        className="absolute inset-0 rounded-full -z-10"
-                        style={{ background: "rgba(120,120,140,0.08)" }}
-                      />
-                    )}
-                    <span className="relative z-10">{label}</span>
-                  </a>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Right */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
+      <div style={{ marginBottom: "32px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "6px" }}>
+          <span style={{ fontSize: "20px", fontWeight: 700, color: "#111827", letterSpacing: "-0.01em" }}>
+            Inkvelle
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <a
               href="https://www.npmjs.com/package/inkvelle"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 text-[13px] font-bold px-4 py-2 rounded-full transition-all duration-300 whitespace-nowrap"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                background: "linear-gradient(180deg, #27272a 0%, #09090b 100%)",
-                color: "#ffffff",
-                boxShadow: "inset 0 1px 1px rgba(255,255,255,0.2), 0 2px 12px rgba(0,0,0,0.1)",
-                border: "1px solid rgba(0,0,0,0.8)",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
-                el.style.transform = "translateY(-1px) scale(1.02)";
-                el.style.boxShadow = "inset 0 1px 1px rgba(255,255,255,0.3), 0 8px 18px rgba(0,0,0,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement;
-                el.style.transform = "none";
-                el.style.boxShadow = "inset 0 1px 1px rgba(255,255,255,0.2), 0 2px 12px rgba(0,0,0,0.1)";
-              }}
+              style={{ ...mono, fontSize: "10px", color: "#9ca3af", textDecoration: "none" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#374151"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9ca3af"; }}
             >
-              <svg width="14" height="14" viewBox="0 0 780 250" fill="currentColor" className="shrink-0 opacity-80">
-                <path d="M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z" />
-              </svg>
-              npm page
+              v2.0.0
             </a>
-
-            <button
-              className="lg:hidden w-10 h-10 shrink-0 rounded-full transition-colors flex items-center justify-center relative"
-              style={{
-                color: "var(--ink-text)",
-                background: mobileOpen ? "rgba(120,120,140,0.1)" : "transparent"
-              }}
-              onClick={() => setMobileOpen((v) => !v)}
+            <span style={{ color: "#d1d5db", fontSize: "12px" }}>/</span>
+            <a
+              href="https://github.com/edwinvakayil/inkvelle"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#9ca3af", textDecoration: "none", display: "flex", alignItems: "center" }}
             >
-              {mobileOpen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                  <line x1="4" x2="20" y1="12" y2="12" />
-                  <line x1="4" x2="20" y1="6" y2="6" />
-                  <line x1="4" x2="20" y1="18" y2="18" />
-                </svg>
-              )}
-            </button>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M6.71356 13.6687C6.71354 13.5709 6.69203 13.4744 6.65053 13.3858C6.60903 13.2973 6.54857 13.219 6.47343 13.1564C6.3983 13.0939 6.31032 13.0486 6.21574 13.0238C6.12115 12.9991 6.02228 12.9954 5.92613 13.0131C5.0534 13.1733 3.95152 13.1974 3.65855 12.3744C3.40308 11.7371 2.97993 11.1808 2.43394 10.7644C2.39498 10.7432 2.35785 10.7189 2.32294 10.6915C2.27515 10.5655 2.19028 10.4569 2.07951 10.38C1.96875 10.3032 1.83729 10.2618 1.70249 10.2612H1.69924C1.52297 10.2611 1.35386 10.3309 1.22891 10.4552C1.10397 10.5796 1.03337 10.7483 1.03257 10.9246C1.02996 11.4682 1.57324 11.8165 1.79364 11.9344C2.05353 12.1955 2.26241 12.5028 2.40952 12.8406C2.65236 13.5229 3.35809 14.5581 5.38674 14.4246C5.3874 14.448 5.38804 14.4702 5.38836 14.4904L5.39129 14.6687C5.39129 14.8456 5.46153 15.0151 5.58655 15.1402C5.71158 15.2652 5.88115 15.3354 6.05796 15.3354C6.23477 15.3354 6.40434 15.2652 6.52936 15.1402C6.65439 15.0151 6.72463 14.8456 6.72463 14.6687L6.72137 14.4565C6.71812 14.3302 6.71356 14.1472 6.71356 13.6687ZM13.8249 3.58471C13.8461 3.50137 13.8669 3.40893 13.8851 3.30476C13.9929 2.56182 13.8989 1.80355 13.613 1.10943C13.5769 1.01894 13.5215 0.937432 13.4505 0.870629C13.3796 0.803826 13.295 0.753341 13.2025 0.722714C12.9652 0.642634 12.0889 0.48508 10.4131 1.55605C9.02014 1.22824 7.57009 1.22824 6.17711 1.55605C4.50816 0.500767 3.63641 0.643967 3.40138 0.719487C3.30663 0.748874 3.21965 0.799091 3.14682 0.866459C3.07399 0.933826 3.01716 1.01664 2.98048 1.10882C2.68869 1.81627 2.59571 2.59 2.7116 3.34645C2.72789 3.43173 2.74546 3.51051 2.76369 3.58277C2.21141 4.3184 1.91723 5.21568 1.92678 6.13551C1.92498 6.34073 1.93443 6.5459 1.9551 6.75009C2.17777 9.81845 4.17776 10.7397 5.5713 11.0561C5.54234 11.1394 5.51597 11.2286 5.49253 11.323C5.45076 11.4945 5.47871 11.6756 5.57026 11.8266C5.66182 11.9775 5.80949 12.086 5.98091 12.1283C6.15233 12.1705 6.3335 12.143 6.4847 12.0519C6.63589 11.9607 6.74477 11.8133 6.78745 11.642C6.82987 11.4199 6.9386 11.2158 7.09931 11.0567C7.19648 10.9717 7.26683 10.8602 7.30181 10.7359C7.33679 10.6115 7.33488 10.4797 7.29632 10.3565C7.25777 10.2332 7.18422 10.1238 7.08463 10.0416C6.98504 9.95937 6.8637 9.90785 6.73537 9.89332C4.43264 9.6303 3.43296 8.69215 3.28257 6.6277C3.26591 6.46419 3.25841 6.29987 3.26011 6.13551C3.24942 5.47995 3.466 4.8409 3.87306 4.32692C3.91397 4.27334 3.95753 4.22184 4.0036 4.17262C4.08522 4.08129 4.1401 3.96923 4.16221 3.84876C4.18432 3.72828 4.1728 3.60404 4.12893 3.48968C4.08396 3.36937 4.04933 3.24543 4.02542 3.11923C3.97111 2.76038 3.98892 2.39429 4.07782 2.04241C4.65724 2.20606 5.20256 2.47243 5.68782 2.82886C5.76806 2.88231 5.85887 2.91788 5.95407 2.93316C6.04927 2.94843 6.14664 2.94306 6.23958 2.91741C7.58698 2.55174 9.00752 2.55197 10.3548 2.91807C10.4483 2.9437 10.5461 2.94877 10.6417 2.93292C10.7373 2.91707 10.8283 2.88069 10.9085 2.82628C11.3915 2.46837 11.9345 2.19961 12.512 2.03266C12.6005 2.3761 12.6203 2.73363 12.5703 3.08474C12.5462 3.2231 12.5084 3.35874 12.4577 3.48969C12.4138 3.60406 12.4023 3.72829 12.4244 3.84877C12.4465 3.96925 12.5014 4.0813 12.583 4.17263C12.6344 4.23057 12.6859 4.29307 12.7321 4.35167C13.1363 4.85695 13.3492 5.48865 13.3334 6.13551C13.3346 6.30858 13.3262 6.48159 13.3083 6.65373C13.1615 8.69084 12.1579 9.62965 9.84442 9.89331C9.71606 9.90793 9.59471 9.95953 9.49513 10.0418C9.39555 10.1241 9.32203 10.2336 9.28351 10.3569C9.24499 10.4802 9.24313 10.6121 9.27816 10.7365C9.31319 10.8608 9.38359 10.9723 9.48081 11.0574C9.64657 11.2207 9.75553 11.433 9.79169 11.6628C9.83674 11.8413 9.85743 12.0251 9.85321 12.2091V13.7651C9.84669 14.1967 9.84669 14.5203 9.84669 14.6687C9.84669 14.8455 9.91692 15.0151 10.0419 15.1401C10.167 15.2651 10.3365 15.3354 10.5134 15.3354C10.6902 15.3354 10.8597 15.2651 10.9848 15.1401C11.1098 15.0151 11.18 14.8455 11.18 14.6687C11.18 14.5242 11.18 14.2071 11.1865 13.7755V12.2091C11.1919 11.9143 11.1572 11.6202 11.0833 11.3347C11.0622 11.241 11.0364 11.1485 11.0059 11.0574C12.02 10.8889 12.9415 10.366 13.6063 9.5818C14.271 8.79757 14.636 7.8029 14.6361 6.77483C14.658 6.56245 14.6683 6.34902 14.6667 6.13551C14.6815 5.21469 14.3849 4.31586 13.8249 3.58472L13.8249 3.58471Z" />
+              </svg>
+            </a>
           </div>
         </div>
+        <p style={{ ...mono, fontSize: "12px", color: "#9ca3af", margin: 0 }}>
+          Give your text a little swagger—powered by Motion.
+        </p>
+      </div>
 
-        {/* Mobile dropdown */}
-        <div
-          className="pointer-events-auto w-full sm:w-[360px] max-w-full overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top mt-2"
-          style={{
-            opacity: mobileOpen ? 1 : 0,
-            transform: mobileOpen ? "scaleY(1)" : "scaleY(0.9)",
-            pointerEvents: mobileOpen ? "auto" : "none",
-            maxHeight: mobileOpen ? "600px" : "0px",
-          }}
-        >
-          <div
-            className="w-full rounded-[2rem] shadow-2xl p-5 flex flex-col gap-1"
+      {/* ── Main Preview Card ───────────────────────────────────────────────── */}
+      <div style={{
+        background: "#f9fafb",
+        border: "1px solid #f3f4f6",
+        borderRadius: "12px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "240px",
+        marginBottom: "24px",
+      }}>
+        <div key={key} style={{ textAlign: "center" }}>
+          {isMounted && (
+            <Typography
+              variant={variant as any}
+              font={font}
+              animation={animation}
+              italic={italic}
+              accentColor={accentColor}
+              color="#111827"
+            >
+              {leadingWords ? `${leadingWords} ` : ""}{italic ? <em>{lastWord}</em> : lastWord}
+            </Typography>
+          )}
+        </div>
+      </div>
+
+      {/* ── Controls Card ──────────────────────────────────────────────────────── */}
+      <div style={{
+        background: "#ffffff",
+        border: "1px solid #e5e7eb",
+        borderRadius: "8px",
+        marginBottom: "40px",
+      }}>
+        {/* Row 0: Text Input + Replay */}
+        <div style={{ padding: "24px", borderBottom: "1px solid #f3f4f6", display: "flex", gap: "10px", alignItems: "center" }}>
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Type something..."
             style={{
-              background: "rgba(255, 255, 255, 0.85)",
-              backdropFilter: "blur(32px) saturate(200%)",
-              WebkitBackdropFilter: "blur(32px) saturate(200%)",
-              border: "1px solid rgba(120, 120, 140, 0.15)",
-              boxShadow: "0 20px 60px -10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8)",
+              ...mono,
+              flex: 1,
+              fontSize: "11px",
+              padding: "6px 12px",
+              border: "1px solid #e5e7eb",
+              borderRadius: "6px",
+              background: "#ffffff",
+              color: "#374151",
+              outline: "none",
             }}
+          />
+          <button
+            onClick={replay}
+            style={{
+              ...mono,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "6px 14px",
+              background: "#1c1c1c",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "11px",
+              cursor: "pointer",
+              fontWeight: 500,
+              transition: "opacity 0.15s",
+              whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.75"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
           >
-            {NAV_ITEMS.map(({ id, label }) => {
-              const isActive = navActive === id;
-              return (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  onClick={() => setMobileOpen(false)}
-                  className="px-4 py-3.5 rounded-[1rem] text-sm font-bold transition-all flex items-center justify-between"
-                  style={{
-                    color: isActive ? "var(--ink-accent)" : "var(--ink-text)",
-                    background: isActive ? "rgba(120,120,140,0.08)" : "transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.background = "rgba(120,120,140,0.04)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  {label}
-                  {isActive && (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  )}
-                </a>
-              );
-            })}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+            Replay
+          </button>
+        </div>
 
-            <hr className="my-3 border-none h-px" style={{ background: "rgba(120,120,140,0.15)" }} />
-
-            <a
-              href="https://www.npmjs.com/package/inkvelle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-3.5 rounded-[1rem] text-sm font-bold transition-all flex items-center justify-between"
-              style={{
-                background: "linear-gradient(180deg, #27272a 0%, #09090b 100%)",
-                color: "#ffffff",
-                boxShadow: "inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.15)",
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <svg width="16" height="16" viewBox="0 0 780 250" fill="currentColor" className="opacity-80">
-                  <path d="M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z" />
-                </svg>
-                View on NPM
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-            </a>
+        {/* Row 1: Font */}
+        <div style={{ padding: "24px", borderBottom: "1px solid #f3f4f6" }}>
+          <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Font</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {FONTS.map((f) => (
+              <PillButton key={f} active={font === f} onClick={() => { setFont(f); replay(); }}>
+                {f.split(" ")[0]}
+              </PillButton>
+            ))}
           </div>
         </div>
-      </header>
 
-      {/* ── Main ────────────────────────────────────────────────────────────── */}
-      <main style={{ paddingTop: "56px" }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8">
-
-          {/* ── Hero ──────────────────────────────────────────────────────── */}
-          <section className="pt-20 pb-20 sm:pt-28 sm:pb-28">
-
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 mb-7 text-xs font-semibold"
-              style={{
-                ...mono,
-                color: "var(--ink-muted)",
-                animation: "fadeIn 0.5s ease both",
-              }}
-            >
-              <span className="relative flex h-1.5 w-1.5 items-center justify-center">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--ink-accent)" }}></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: "var(--ink-accent)" }}></span>
-              </span>
-              Release · v{VERSION}
-            </div>
-
-            {/* Headline */}
-            <div style={{ animation: "fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both" }}>
-              <HeroHeadline />
-            </div>
-
-            {/* Sub */}
-            <p
-              className="mt-6 text-base sm:text-lg leading-relaxed max-w-2xl"
-              style={{ color: "var(--ink-sub)", animation: "fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both" }}
-            >
-              A zero-dependency React + TypeScript typography component with automatic Google Fonts, 30+ hero animations, custom motionConfig, and a direct DOM ref for GSAP or Framer Motion.
-            </p>
-
-            {/* CTAs */}
-            <div
-              className="flex flex-wrap items-center gap-3 mt-8"
-              style={{ animation: "fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.32s both" }}
-            >
-              <a
-                href="#playground"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded text-[13px] font-bold transition-opacity duration-200"
-                style={{ ...mono, background: "var(--ink-text)", color: "#ffffff" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "0.85"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = "1"; }}
-              >
-                Try the playground
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 19h8" />
-                  <path d="m4 17 6-6-6-6" />
-                </svg>
-              </a>
-              <a
-                href="#install"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded text-[13px] font-bold transition-all duration-200"
-                style={{ ...mono, color: "var(--ink-text)", border: "1px solid var(--ink-border)", background: "transparent" }}
-                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "var(--ink-surface)"; }}
-                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.background = "transparent"; }}
-              >
-                View installation
-              </a>
-            </div>
-
-          </section>
-
-          {/* ── Divider ─────────────────────────────────────────────────────── */}
-          <hr style={{ border: "none", borderTop: "1px solid var(--ink-border)", marginBottom: "5rem" }} />
-
-          {/* ── Installation ────────────────────────────────────────────────── */}
-          <section className="mb-24" id="install">
-            <SectionHeader title="Installation" />
-            <CodeBlock code={INSTALL_CODE} language="bash" />
-
-            <h3 className="text-xl font-bold mt-10 mb-4" style={{ ...heading, color: "var(--ink-text)" }}>
-              Quick start
-            </h3>
-            <CodeBlock code={QUICKSTART_CODE} language="tsx" />
-
-            <h3 className="text-xl font-bold mt-10 mb-3" style={{ ...heading, color: "var(--ink-text)" }}>
-              Pre-loading fonts
-            </h3>
-            <p className="text-sm mb-4" style={{ color: "var(--ink-sub)" }}>
-              Call <code style={{ ...mono, color: "var(--ink-accent)", fontSize: "0.85em", background: "rgba(120,120,140,0.09)", padding: "0.1em 0.35em", borderRadius: "4px", border: "1px solid rgba(120,120,140,0.18)" }}>preloadFonts</code> once at your app root to avoid FOUT (flash of unstyled text).
-            </p>
-            <CodeBlock code={PRELOAD_CODE} language="tsx" />
-          </section>
-
-          {/* ── Playground ──────────────────────────────────────────────────── */}
-          <section className="mb-24" id="playground">
-            <SectionHeader
-              title="Playground"
-              desc="Pick a font, choose an animation, toggle italic accent — all live. The last word becomes the <em> accent."
-            />
-            <HeroPlayground />
-          </section>
-
-          {/* ── Variants ────────────────────────────────────────────────────── */}
-          <section className="mb-24" id="variants">
-            <SectionHeader
-              title="Variants"
-              desc="12 variants mapped to their semantic HTML tag and type scale. Each sets the correct tag, weight, size, and line-height automatically."
-            />
-            <VariantShowcase />
-            <div className="mt-6">
-              <CodeBlock code={VARIANTS_CODE} language="tsx" />
-            </div>
-          </section>
-
-          {/* ── Animations ──────────────────────────────────────────────────── */}
-          <section className="mb-24" id="animations">
-            <SectionHeader
-              title="Hero animations"
-              desc="The animation prop applies to Display and H1 only. 43 CSS keyframe animations — GPU-composited, no layout thrashing, 60fps safe. Click any card to preview."
-            />
-            <AnimationGrid />
-            <div className="mt-8">
-              <CodeBlock code={ANIMATION_CODE} language="tsx" />
-            </div>
-          </section>
-
-          {/* ── Custom Motion ────────────────────────────────────────────────── */}
-          <section className="mb-24" id="motion">
-            <SectionHeader
-              title="Custom motion"
-              desc="Three escape hatches when built-in presets don't fit. Priority: motionRef > motionConfig > animation."
-            />
-
-            <CodeBlock code={MOTION_PRIORITY_CODE} language="tsx" />
-
-            <h3 className="text-xl font-bold mt-12 mb-3" style={{ ...heading, color: "var(--ink-text)" }}>
-              motionConfig — interactive builder
-            </h3>
-            <p className="text-sm mb-6 leading-relaxed" style={{ color: "var(--ink-sub)" }}>
-              Write your own keyframes body and choose whether to animate the whole element, split by words, or split by characters.
-              Works on <strong style={{ color: "var(--ink-text)" }}>any variant</strong>, not just heroes.
-            </p>
-            <MotionConfigDemo />
-            <div className="mt-8">
-              <CodeBlock code={MOTION_CONFIG_CODE} language="tsx" />
-            </div>
-
-            <h3 className="text-xl font-bold mt-12 mb-3" style={{ ...heading, color: "var(--ink-text)" }}>
-              motionRef — direct DOM access
-            </h3>
-            <p className="text-sm mb-6 leading-relaxed" style={{ color: "var(--ink-sub)" }}>
-              A ref callback that gives you the raw <code style={{ ...mono, color: "var(--ink-accent)", fontSize: "0.85em" }}>HTMLElement</code> after mount.
-              Use it with GSAP, Framer Motion, or the Web Animations API.
-            </p>
-            <CodeBlock code={MOTION_REF_CODE} language="tsx" />
-          </section>
-
-          {/* ── Italic ───────────────────────────────────────────────────────── */}
-          <section className="mb-24" id="italic">
-            <SectionHeader
-              title="Italic accent"
-              desc="Wrap any word in <em> inside Display or H1. The italic prop switches between Instrument Serif and the heading font. Off by default."
-            />
-
-            {/* Live comparison */}
-            <div
-              className="overflow-hidden mb-8 grid sm:grid-cols-2"
-              style={{ border: "1px solid var(--ink-border)", borderRadius: "12px", background: "#ffffff" }}
-            >
-              <div
-                className="p-8 flex flex-col gap-3"
-                style={{ borderRight: "1px solid var(--ink-border)" }}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className="text-[10px] font-bold px-2 py-0.5"
-                    style={{ ...mono, background: "var(--ink-surface)", color: "var(--ink-muted)", border: "1px solid var(--ink-border)" }}
-                  >
-                    italic={"{false}"}
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>default</span>
-                </div>
-                <div style={{ ...heading, fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "var(--ink-text)", fontWeight: 800, lineHeight: 1.1 }}>
-                  Build with <em style={{ fontStyle: "normal" }}>precision</em>
-                </div>
-                <p className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-muted)" }}>
-                  &lt;em&gt; inherits heading font
-                </p>
-              </div>
-
-              <div className="p-8 flex flex-col gap-3" style={{ background: "var(--ink-surface)" }}>
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className="text-[10px] font-bold px-2 py-0.5"
-                    style={{ ...mono, background: "rgba(13,148,136,0.08)", color: "#0d9488", border: "1px solid rgba(13,148,136,0.25)" }}
-                  >
-                    italic={"{true}"}
-                  </span>
-                </div>
-                <div style={{ ...heading, fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "var(--ink-text)", fontWeight: 800, lineHeight: 1.1 }}>
-                  Build with{" "}
-                  <em style={{ fontStyle: "italic", fontFamily: "'Instrument Serif', Georgia, serif", color: "#0d9488", fontWeight: 400 }}>
-                    precision
-                  </em>
-                </div>
-                <p className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-muted)" }}>
-                  &lt;em&gt; → Instrument Serif + accentColor
-                </p>
-              </div>
-            </div>
-            <CodeBlock code={ITALIC_CODE} language="tsx" />
-          </section>
-
-          {/* ── Truncation ───────────────────────────────────────────────────── */}
-          <section className="mb-24" id="truncate">
-            <SectionHeader
-              title="Truncation"
-              desc="Clip single lines with truncate or multi-line with maxLines. Both use CSS — no JavaScript required."
-            />
-
-            <div
-              className="overflow-hidden mb-8"
-              style={{ border: "1px solid var(--ink-border)", background: "#ffffff", borderRadius: "12px" }}
-            >
-              <div className="p-6 flex flex-col gap-2" style={{ borderBottom: "1px solid var(--ink-border)" }}>
-                <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-sub)" }}>variant=&quot;H2&quot; truncate</code>
-                <div
-                  className="overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"
-                  style={{ ...heading, color: "var(--ink-text)", maxWidth: "420px" }}
-                >
-                  This very long title will be cut off with an ellipsis
-                </div>
-              </div>
-              <div className="p-6 flex flex-col gap-2" style={{ background: "var(--ink-surface)" }}>
-                <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-sub)" }}>variant=&quot;Body&quot; maxLines={"{3}"}</code>
-                <div
-                  style={{
-                    color: "var(--ink-sub)", fontSize: "0.95rem", lineHeight: 1.65,
-                    display: "-webkit-box", WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical" as const, overflow: "hidden", maxWidth: "560px",
-                  }}
-                >
-                  A long paragraph clamped to exactly three lines. No matter how much content is
-                  inside, it stops here — cleanly, with an ellipsis. This is the overflow, which
-                  you will never see. The component uses CSS line-clamp under the hood, so there
-                  is no JavaScript measuring involved.
-                </div>
-              </div>
-            </div>
-            <CodeBlock code={TRUNCATE_CODE} language="tsx" />
-          </section>
-
-          {/* ── TypographyProvider ───────────────────────────────────────────── */}
-          <section className="mb-24" id="provider">
-            <SectionHeader
-              title="TypographyProvider"
-              desc="Wrap your app or any section to set font, accentColor, italic, animation, and color once. Any explicit prop still wins — the provider is the fallback."
-            />
-
-            <h3 className="text-lg font-bold mb-4" style={{ ...heading, color: "var(--ink-text)" }}>Basic usage</h3>
-            <CodeBlock code={PROVIDER_BASIC_CODE} language="tsx" />
-
-            <h3 className="text-lg font-bold mt-10 mb-3" style={{ ...heading, color: "var(--ink-text)" }}>Nested providers</h3>
-            <p className="text-sm mb-4" style={{ color: "var(--ink-sub)" }}>
-              The nearest provider wins — useful for section-level theming without prop drilling.
-            </p>
-            <CodeBlock code={PROVIDER_NESTING_CODE} language="tsx" />
-
-            {/* Priority table */}
-            <h3 className="text-lg font-bold mt-10 mb-4" style={{ ...heading, color: "var(--ink-text)" }}>Priority order</h3>
-            <div className="overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "12px" }}>
-              {[
-                { rank: "1", label: "Explicit prop", desc: "Highest priority. Always wins.", color: "var(--ink-accent)" },
-                { rank: "2", label: "TypographyProvider theme", desc: "Fallback for all Typography inside the provider.", color: "var(--ink-text)" },
-                { rank: "3", label: "Built-in default", desc: "Lowest priority — the component's own sensible defaults.", color: "var(--ink-sub)" },
-              ].map((row, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-4 px-5 py-3"
-                  style={{
-                    background: "#ffffff",
-                    borderBottom: i < 2 ? "1px solid var(--ink-border)" : "none",
-                  }}
-                >
-                  <span
-                    className="w-5 h-5 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5"
-                    style={{ ...mono, color: row.color, border: `1px solid ${row.color}` }}
-                  >
-                    {row.rank}
-                  </span>
-                  <div className="flex flex-col gap-0.5">
-                    <code className="text-[11px] font-bold" style={{ ...mono, color: row.color }}>{row.label}</code>
-                    <span className="text-[13px] leading-relaxed tracking-wide" style={{ ...heading, color: "var(--ink-sub)" }}>{row.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── SSR & Next.js ────────────────────────────────────────────────── */}
-          <section className="mb-24" id="ssr">
-            <SectionHeader
-              title="SSR & Next.js"
-              desc="inkvelle is fully SSR-safe. All DOM work happens inside useInsertionEffect — never called on the server. Text renders in server HTML; animations play after hydration."
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div className="flex flex-col gap-2 min-w-0">
-                <h3 className="text-base font-bold" style={{ ...heading, color: "var(--ink-text)" }}>App Router</h3>
-                <CodeBlock code={NEXTJS_LAYOUT_CODE} language="tsx" />
-              </div>
-              <div className="flex flex-col gap-2 min-w-0">
-                <h3 className="text-base font-bold" style={{ ...heading, color: "var(--ink-text)" }}>Pages Router</h3>
-                <CodeBlock code={NEXTJS_PAGES_CODE} language="tsx" />
-              </div>
-            </div>
-            <CodeBlock code={NEXTJS_PAGE_CODE} language="tsx" />
-
-            <div className="mt-8 overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "12px" }}>
-              <div
-                className="hidden sm:grid px-5 py-3"
-                style={{ gridTemplateColumns: "10rem 11rem 12rem", background: "var(--ink-surface)", borderBottom: "1px solid var(--ink-border)" }}
-              >
-                {["prop", "server", "client"].map((h) =>(
-                   <span key={h} className="text-[10px] uppercase font-bold tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>{h}</span>
-                ))}
-              </div>
-              {[
-                { prop: "variant, font, color, align, truncate, maxLines", server: "Inline styles in HTML", client: "Hydrated", highlight: false },
-                { prop: "animation", server: "Class name in HTML", client: "Keyframe injected, plays", highlight: true },
-                { prop: "motionConfig", server: "Raw HTML, split spans present", client: "Animation applied", highlight: true },
-                { prop: "motionRef", server: "Plain HTML", client: "Callback fires", highlight: true },
-                { prop: "italic / accentColor", server: "Inline styles on <em>", client: "No flash on hydration", highlight: false },
-              ].map((row, i, arr) => (
-                <div
-                  key={i}
-                  className="flex flex-col sm:grid px-5 py-4 items-start gap-3 sm:gap-4"
-                  style={{ gridTemplateColumns: "10rem 11rem 12rem", background: "#ffffff", borderBottom: i < arr.length - 1 ? "1px solid var(--ink-border)" : "none" }}
-                >
-                  <div className="flex items-center justify-between w-full sm:block pr-6">
-                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Prop</span>
-                    <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-text)", wordBreak: "break-word" as const }}>{row.prop}</code>
-                  </div>
-                  <div className="flex items-center justify-between w-full sm:block text-[13px]" style={{ ...heading, color: "var(--ink-sub)", paddingTop: "0.1rem" }}>
-                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Server</span>
-                    <span>{row.server}</span>
-                  </div>
-                  <div className="flex items-center justify-between w-full sm:block text-[13px] font-medium" style={{ ...heading, color: row.highlight ? "#0d9488" : "var(--ink-text)", paddingTop: "0.1rem" }}>
-                    <span className="sm:hidden text-[9px] uppercase tracking-wider font-bold opacity-40">Client</span>
-                    <span>{row.client}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ── Props ────────────────────────────────────────────────────────── */}
-          <section className="mb-24" id="props">
-            <SectionHeader title="Props" desc="Full prop reference for the Typography component." />
-            <PropTable />
-          </section>
-
-          {/* ── Font pairings ─────────────────────────────────────────────────── */}
-          <section className="mb-28">
-            <SectionHeader
-              title="Recommended font pairings"
-              desc="Opinionated picks for hero headings. Pass the name directly to the font prop — the Google Font link is injected automatically."
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-hidden" style={{ border: "1px solid var(--ink-border)", borderRadius: "16px" }}>
-              {[
-                { font: "Bricolage Grotesque", style: "Bold sans", use: "Startups, SaaS, modern brand", color: "#2563eb" },
-                { font: "Syne", style: "Geometric", use: "Creative, portfolio, agency", color: "#6366f1" },
-                { font: "Fraunces", style: "Serif", use: "Editorial, luxury, fashion", color: "#0d9488" },
-                { font: "Bebas Neue", style: "Condensed", use: "Sports, bold campaigns", color: "#db2777" },
-                { font: "Playfair Display", style: "Serif", use: "Journalism, books, culture", color: "#7c3aed" },
-                { font: "Outfit", style: "Clean sans", use: "Apps, dashboards, fintech", color: "#ea580c" },
-              ].map(({ font, style, use, color }, i) => (
-                <div
-                  key={font}
-                  className="p-6 transition-colors duration-100 flex flex-col"
-                  style={{
-                    background: "#ffffff",
-                    borderBottom: i < 3 || (i >= 3 && i < 5) ? "1px solid var(--ink-border)" : "none",
-                    borderRight: (i + 1) % 3 !== 0 ? "1px solid var(--ink-border)" : "none"
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = "var(--ink-surface)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = "#ffffff"; }}
-                >
-                  <div className="text-[2rem] font-bold mb-4" style={{ fontFamily: `'${font}', sans-serif`, color, lineHeight: 1 }}>
-                    Aa
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <code className="text-[11px] font-bold" style={{ ...mono, color: "var(--ink-text)" }}>
-                      {font}
-                    </code>
-                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ ...mono, color: "var(--ink-muted)" }}>
-                      {style}
-                    </span>
-                  </div>
-                  <p className="text-[13px] leading-relaxed mt-auto" style={{ ...heading, color: "var(--ink-sub)" }}>
-                    {use}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
+        {/* Row 2: Animation */}
+        <div style={{ padding: "24px", borderBottom: "1px solid #f3f4f6" }}>
+          <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Animation</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {ANIMATIONS.map((a) => (
+              <PillButton key={a} active={animation === a} onClick={() => { setAnimation(a); replay(); }}>
+                {a}
+              </PillButton>
+            ))}
+          </div>
         </div>
-      </main>
+
+        {/* Row 3: Variant */}
+        <div style={{ padding: "24px", borderBottom: "1px solid #f3f4f6" }}>
+          <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Variant</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {["Display", "H1", "H2", "H3", "H4", "H5", "H6", "Subheading", "Overline", "Body", "Label", "Caption"].map((v) => (
+              <PillButton key={v} active={variant === v} onClick={() => { setVariant(v); replay(); }}>
+                {v}
+              </PillButton>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 3: Accent + Italic */}
+        <div style={{ padding: "24px", display: "flex", flexWrap: "wrap", gap: "25px" }}>
+          <div>
+            <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Accent</p>
+            <div style={{ display: "flex", gap: "16px" }}>
+              {ACCENT_COLORS.map((c) => (
+                <div key={c.value} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                  <button
+                    onClick={() => { setAccent(c.value); replay(); }}
+                    title={c.label}
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                      background: c.value,
+                      border: "none",
+                      cursor: "pointer",
+                      outline: accentColor === c.value ? `2px solid ${c.value}` : "2px solid transparent",
+                      outlineOffset: "2px",
+                      opacity: accentColor === c.value ? 1 : 0.4,
+                      transform: accentColor === c.value ? "scale(1.15)" : "scale(1)",
+                      transition: "all 0.15s ease",
+                    }}
+                  />
+                  <span style={{ ...mono, fontSize: "10px", color: "#9ca3af", textTransform: "lowercase" }}>{c.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Italic</p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <PillButton active={italic === true} onClick={() => { setItalic(true); replay(); }}>yes</PillButton>
+              <PillButton active={italic === false} onClick={() => { setItalic(false); replay(); }}>no</PillButton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Installation ────────────────────────────────────────────────────── */}
+      <div style={{ marginBottom: "32px" }}>
+        <h2 style={{ fontSize: "13px", fontWeight: 600, color: "#111827", margin: "0 0 14px 0" }}>
+          Installation
+        </h2>
+        <div style={{
+          background: "#f9fafb",
+          border: "1px solid #f3f4f6",
+          borderRadius: "8px",
+          padding: "16px 20px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}>
+          <span style={{ ...mono, fontSize: "13px", color: "#d1d5db" }}>$</span>
+          <span style={{ ...mono, fontSize: "13px", color: "#374151" }}>npm install inkvelle</span>
+        </div>
+      </div>
+
+      {/* ── Usage ───────────────────────────────────────────────────────────── */}
+      <div style={{ marginBottom: "48px" }}>
+        <h2 style={{ fontSize: "13px", fontWeight: 600, color: "#111827", margin: "0 0 14px 0" }}>
+          Usage
+        </h2>
+        <div style={{
+          background: "#f9fafb",
+          border: "1px solid #f3f4f6",
+          borderRadius: "8px",
+          padding: "16px 20px",
+        }}>
+          {/* Live code output */}
+          <div style={{ ...mono, fontSize: "11px", lineHeight: "1.9", color: "#6b7280" }}>
+            <div style={{ color: "#9ca3af", marginBottom: "8px" }}>
+              import {"{ Typography }"} from &quot;inkvelle&quot;;
+            </div>
+            <div>
+              <span style={{ color: "#6b7280" }}>{"<"}</span>
+              <span style={{ color: "#374151" }}>Typography</span>
+              {" "}
+              <span style={{ color: "#9ca3af" }}>variant</span>
+              <span style={{ color: "#d1d5db" }}>{"="}</span>
+              <span style={{ color: "#6b7280" }}>&quot;{variant}&quot;</span>
+              {" "}
+              <span style={{ color: "#9ca3af" }}>font</span>
+              <span style={{ color: "#d1d5db" }}>{"="}</span>
+              <span style={{ color: "#6b7280" }}>&quot;{font}&quot;</span>
+              {" "}
+              <span style={{ color: "#9ca3af" }}>animation</span>
+              <span style={{ color: "#d1d5db" }}>{"="}</span>
+              <span style={{ color: "#6b7280" }}>&quot;{animation}&quot;</span>
+              {italic && (
+                <>
+                  {" "}
+                  <span style={{ color: "#9ca3af" }}>italic</span>
+                  {" "}
+                  <span style={{ color: "#9ca3af" }}>accentColor</span>
+                  <span style={{ color: "#d1d5db" }}>{"="}</span>
+                  <span style={{ color: "#6b7280" }}>&quot;{accentColor}&quot;</span>
+                </>
+              )}
+              <span style={{ color: "#6b7280" }}>{">"}</span>
+              <br />
+              <span style={{ color: "#111827" }}>
+                {"  "}{leadingWords ? `${leadingWords} ` : ""}{italic ? `<em>${lastWord}</em>` : lastWord}
+              </span>
+              <br />
+              <span style={{ color: "#6b7280" }}>{"</"}</span>
+              <span style={{ color: "#374151" }}>Typography</span>
+              <span style={{ color: "#6b7280" }}>{">"}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: "16px" }}>
+          <a
+            href="https://www.npmjs.com/package/inkvelle"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              ...mono,
+              fontSize: "11px",
+              color: "#9ca3af",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+              transition: "color 0.15s ease"
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#374151"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9ca3af"; }}
+          >
+            Read more docs →
+          </a>
+        </div>
+      </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <footer className="relative overflow-hidden pt-32 pb-8 mt-32" style={{ background: "var(--ink-surface)", borderTop: "1px solid var(--ink-border)" }}>
-
-        {/* Giant background text */}
-        <div
-          className="absolute inset-x-0 bottom-[-5%] pointer-events-none flex justify-start overflow-hidden opacity-[0.03]"
-          style={{ zIndex: 0, paddingLeft: "2vw" }}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "20px" }}>
+        <a
+          href="https://www.edwinvakayil.info/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ ...mono, fontSize: "11px", color: "#9ca3af", textDecoration: "none" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#374151"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9ca3af"; }}
         >
-          <span
-            style={{
-              fontSize: "28vw",
-              fontWeight: 900,
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              lineHeight: 0.75,
-              whiteSpace: "nowrap",
-              color: "var(--ink-text)"
-            }}
-          >
-            inkvelle
-          </span>
-        </div>
-
-        {/* Big CTA */}
-        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 mb-24 sm:mb-32">
-          <div className="max-w-3xl">
-            <h2 className="text-5xl sm:text-7xl font-extrabold tracking-tight mb-6" style={{ ...heading, color: "var(--ink-text)" }}>
-              Ready to craft?
-            </h2>
-            <p className="text-lg sm:text-xl mb-10" style={{ color: "var(--ink-sub)" }}>
-              Install Inkvelle today and bring premium typography animations to your React apps in seconds.
-            </p>
+          built by edwinvakayil
+        </a>
+        <nav style={{ display: "flex", gap: "20px" }}>
+          {["npm"].map((link) => (
             <a
+              key={link}
               href="https://www.npmjs.com/package/inkvelle"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-bold transition-all duration-300 transform hover:-translate-y-1"
-              style={{ ...heading, background: "var(--ink-text)", color: "#ffffff", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.3)" }}
-              onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.boxShadow = "0 20px 40px -10px rgba(0,0,0,0.4)"; }}
-              onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.boxShadow = "0 10px 40px -10px rgba(0,0,0,0.3)"; }}
+              style={{ ...mono, fontSize: "11px", color: "#9ca3af", textDecoration: "none" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#374151"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9ca3af"; }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-terminal">
-                <path d="M12 19h8" />
-                <path d="m4 17 6-6-6-6" />
-              </svg>
-              npm install inkvelle
+              {link}
             </a>
-          </div>
-        </div>
-
-        {/* Links grid */}
-        <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 sm:gap-6 mb-16">
-            <div className="col-span-2 md:col-span-1 flex flex-col items-start pr-8">
-              <span className="text-2xl font-extrabold tracking-tight mb-4" style={{ ...mono, color: "var(--ink-text)" }}>inkvelle.</span>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--ink-sub)" }}>
-                A lightweight animation and typography system for React and Next.js.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-widest mb-1" style={{ ...mono, color: "var(--ink-text)" }}>Playground</span>
-              {["Animations", "Variants", "Custom motion", "Italic"].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase().replace(" ", "")}`}
-                  className="text-sm font-medium transition-colors duration-200"
-                  style={{ color: "var(--ink-sub)" }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-accent)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-sub)"; }}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-widest mb-1" style={{ ...mono, color: "var(--ink-text)" }}>Documentation</span>
-              {["Installation", "Provider", "SSR", "Props"].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-sm font-medium transition-colors duration-200"
-                  style={{ color: "var(--ink-sub)" }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-accent)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-sub)"; }}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <span className="text-xs font-bold uppercase tracking-widest mb-1" style={{ ...mono, color: "var(--ink-text)" }}>Resources</span>
-              <a href="https://www.npmjs.com/package/inkvelle" target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition-colors duration-200" style={{ color: "var(--ink-sub)" }} onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-accent)"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-sub)"; }}>NPM</a>
-              <a href="https://github.com/edwinvakayil/inkvelle" target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition-colors duration-200" style={{ color: "var(--ink-sub)" }} onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-accent)"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--ink-sub)"; }}>GitHub</a>
-            </div>
-          </div>
-
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: "1px solid var(--ink-border)" }}>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <span className="text-xs font-medium" style={{ ...mono, color: "var(--ink-muted)" }}>
-                © {new Date().getFullYear()} inkvelle. Built by{" "}
-                <a
-                  href="https://www.edwinvakayil.info/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-colors hover:text-[var(--ink-accent)]"
-                  style={{ color: "var(--ink-sub)", textDecoration: "underline", textUnderlineOffset: "3px" }}
-                >
-                  Edwin Vakayil
-                </a>.
-              </span>
-              <span className="hidden sm:inline-block text-xs" style={{ color: "var(--ink-border2)" }}>|</span>
-              <span className="text-xs" style={{ ...mono, color: "var(--ink-muted)" }}>v{VERSION}</span>
-            </div>
-          </div>
-        </div>
-      </footer>
-
-      <ScrollToTop />
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }
