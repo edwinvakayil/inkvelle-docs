@@ -1,5 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { Typography } from "inkvelle";
 
 const FONTS = [
@@ -121,7 +122,7 @@ export default function HeroPlayground() {
           </div>
         </div>
         <p style={{ ...mono, fontSize: "12px", color: "#9ca3af", margin: 0 }}>
-          Give your text a little swagger—powered by Motion.
+          A minimalist React typography library for high-end digital interfaces.
         </p>
       </div>
 
@@ -356,10 +357,8 @@ export default function HeroPlayground() {
         </div>
 
         <div style={{ marginTop: "16px" }}>
-          <a
-            href="https://www.npmjs.com/package/inkvelle"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/docs"
             style={{
               ...mono,
               fontSize: "11px",
@@ -374,7 +373,7 @@ export default function HeroPlayground() {
             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#9ca3af"; }}
           >
             Read more docs →
-          </a>
+          </Link>
         </div>
       </div>
 

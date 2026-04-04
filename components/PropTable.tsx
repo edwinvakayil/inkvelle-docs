@@ -90,7 +90,7 @@ export default function PropTable() {
             {/* Description */}
             <div className="flex items-start gap-2 sm:block">
               <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest w-20 shrink-0 pt-px" style={{ ...mono, color: "var(--ink-muted)" }}>desc</span>
-              <p className="text-[13px] leading-relaxed" style={{ color: "var(--ink-sub)", fontFamily: "'Bricolage Grotesque', sans-serif" }}>
+              <p className="text-[13px] leading-relaxed" style={{ color: "var(--ink-sub)" }}>
                 {p.description}
               </p>
             </div>

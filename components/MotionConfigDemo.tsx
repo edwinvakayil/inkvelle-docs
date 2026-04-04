@@ -126,16 +126,7 @@ export default function MotionConfigDemo() {
         className="relative flex items-center justify-center min-h-[160px] px-8 py-10 overflow-hidden"
         style={{ background: "var(--ink-surface)" }}
       >
-        {/* Grid line background */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--ink-border) 1px, transparent 1px), linear-gradient(90deg, var(--ink-border) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-            opacity: 0.5,
-          }}
-        />
+
         <div key={previewKey} className="relative text-center">
           <Typography variant="H1" font="Bricolage Grotesque" motionConfig={motionConfig} color="var(--ink-text)">
             Your heading text
