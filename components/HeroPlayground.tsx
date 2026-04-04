@@ -62,6 +62,8 @@ function PillButton({
   );
 }
 
+type TypographyVariant = "Display" | "H1" | "H2" | "H3" | "H4" | "H5" | "H6" | "Subheading" | "Overline" | "Body" | "Label" | "Caption";
+
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function HeroPlayground() {
@@ -69,7 +71,7 @@ export default function HeroPlayground() {
   const [animation, setAnimation] = useState<HeroAnimation>("cinch");
   const [italic, setItalic] = useState(true);
   const [accentColor, setAccent] = useState("#e11d48");
-  const [variant, setVariant] = useState("Display");
+  const [variant, setVariant] = useState<TypographyVariant>("Display");
   const [text, setText] = useState("Inkvelle meets motion");
   const [isMounted, setIsMounted] = useState(false);
   const [key, setKey] = useState(0);
@@ -146,7 +148,7 @@ export default function HeroPlayground() {
         <div key={key} style={{ textAlign: "center" }}>
           {isMounted && (
             <Typography
-              variant={variant as any}
+              variant={variant}
               font={font}
               animation={animation}
               italic={italic}
@@ -244,7 +246,7 @@ export default function HeroPlayground() {
         <div style={{ padding: "24px", borderBottom: "1px solid #f3f4f6" }}>
           <p style={{ ...mono, fontSize: "10px", color: "#6b7280", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.05em" }}>Variant</p>
           <div role="group" aria-label="Variant selection" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {["Display", "H1", "H2", "H3", "H4", "H5", "H6", "Subheading", "Overline", "Body", "Label", "Caption"].map((v) => (
+            {(["Display", "H1", "H2", "H3", "H4", "H5", "H6", "Subheading", "Overline", "Body", "Label", "Caption"] as TypographyVariant[]).map((v) => (
               <PillButton key={v} active={variant === v} onClick={() => { setVariant(v); replay(); }} ariaLabel={`Set variant to ${v}`}>
                 {v}
               </PillButton>
