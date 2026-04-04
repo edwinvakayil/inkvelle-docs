@@ -3,8 +3,40 @@
 import Link from "next/link";
 import PropTable from "./PropTable";
 import MotionConfigDemo from "./MotionConfigDemo";
+import CodeBlock from "./CodeBlock";
 
 const mono = { fontFamily: "'JetBrains Mono', monospace" } as const;
+
+const typographyProviderCode = `import { TypographyProvider, Typography } from "inkvelle";
+
+export default function App() {
+  return (
+    <TypographyProvider
+      theme={{
+        font:        "Bricolage Grotesque",
+        accentColor: "#6366f1",
+        italic:      true,
+        animation:   "rise",
+        color:       "#1a1a1a",
+      }}
+    >
+      {/* Inherits all theme values */}
+      <Typography variant="Display">
+        Build with <em>intention</em>
+      </Typography>
+
+      {/* Overrides just the animation */}
+      <Typography variant="H1" animation="clip">
+        Another hero heading
+      </Typography>
+
+      {/* italic=false wins over theme's italic=true */}
+      <Typography variant="Display" italic={false}>
+        No serif accent here
+      </Typography>
+    </TypographyProvider>
+  );
+}`;
 
 export default function DocsContent() {
   return (
@@ -52,6 +84,18 @@ export default function DocsContent() {
           Prop Reference
         </h2>
         <PropTable />
+      </section>
+
+      {/* ── Section: TypographyProvider ─────────────────────────────────────── */}
+      <section aria-labelledby="typography-provider-title" style={{ marginBottom: "80px" }}>
+        <h2 id="typography-provider-title" style={{ fontSize: "16px", fontWeight: 700, color: "#111827", marginBottom: "16px" }}>
+          TypographyProvider
+        </h2>
+        <p style={{ fontSize: "14px", color: "#4b5563", marginBottom: "24px", lineHeight: "1.6" }}>
+          Wrap your app (or a section of it) with <code style={{ color: "#6366f1" }}>TypographyProvider</code> to set defaults once. 
+          Any prop passed directly to <code style={{ color: "#6366f1" }}>&lt;Typography&gt;</code> still wins — the provider is just the fallback.
+        </p>
+        <CodeBlock code={typographyProviderCode} language="tsx" />
       </section>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
