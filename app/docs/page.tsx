@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   authors: [{ name: "Edwin Vakayil", url: "https://www.edwinvakayil.info/" }],
   openGraph: {
-    title: "Inkvelle Documentation — API & Motion Guide",
+    title: "Inkvelle Documentation",
     description: "Full prop reference and custom motion config playground for Inkvelle.",
     url: "https://inkvelle.edwinvakayil.info/docs",
   }

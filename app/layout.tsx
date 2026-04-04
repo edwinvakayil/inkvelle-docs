@@ -9,8 +9,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://inkvelle.edwinvakayil.info"),
   title: {
-    default: "inkvelle — Typography for React",
-    template: "%s | inkvelle",
+    default: "Inkvelle",
+    template: "%s | Inkvelle",
   },
   description:
     "A lightweight React + TypeScript typography component with automatic Google Fonts support, 43 hero entrance animations, custom motionConfig, and an italic accent toggle.",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "inkvelle — Typography for React",
+    title: "Inkvelle",
     description:
       "40+ hero animations, Google Fonts auto-inject, custom motionConfig, and a direct DOM ref for GSAP or Framer Motion.",
     type: "website",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "inkvelle — Typography for React",
+    title: "Inkvelle",
     description: "40+ hero animations, Google Fonts auto-inject, custom motionConfig.",
     site: "@edwinvakayil",
     creator: "@edwinvakayil",
