@@ -1,0 +1,51 @@
+# Inkvelle — Documentation for LLMs
+
+Inkvelle is a minimalist React + TypeScript typography library designed for high-end digital interfaces. 
+
+It provides advanced entrance animations, automatic Google Fonts support, and deep customization through a `motionConfig` API.
+
+## Core Features
+- **43+ Animation Presets**: Rise, velvet, curtain, ground, cascade, hinge, slab, and more.
+- **Auto Font Injection**: Just specify a Google Font name (e.g., "Fraunces", "Outfit") and it works.
+- **Fine-Grain Splits**: Control splitting by character or word.
+- **Custom Motion**: Pass raw CSS/Framer Motion keyframes through the `motionConfig` prop.
+- **Italic Accent Toggle**: Seamlessly emphasize the last word/part of a string.
+
+## Installation
+```bash
+npm install inkvelle
+```
+
+## Basic Usage
+```tsx
+import { Typography } from "inkvelle";
+
+export default function MyComponent() {
+  return (
+    <Typography 
+      variant="H1" 
+      font="Fraunces" 
+      animation="cascade"
+      italic={true} 
+      accentColor="#e11d48"
+    >
+      Design with intention
+    </Typography>
+  );
+}
+```
+
+## API Reference (Props)
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `children` | `ReactNode` | (Required) | The content to animate. |
+| `variant` | `Variant` | `"Display"` | Typography scale (e.g., Display, H1-H6, Body, Label). |
+| `font` | `string` | `"Inter"` | Any Google Font family name. |
+| `animation` | `string` | `"rise"` | Preset animation key name. |
+| `italic` | `boolean` | `true` | Whether to emphasize the last word. |
+| `accentColor` | `string` | (None) | CSS color for the italicized text. |
+| `motionConfig`| `object` | (Internal) | Advanced timing and keyframe config. |
+
+## Documentation Link
+For the full interactive playground and motion guide, visit:
+https://inkvelle.edwinvakayil.info/docs
