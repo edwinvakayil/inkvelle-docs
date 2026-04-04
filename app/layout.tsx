@@ -58,7 +58,32 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Inkvelle",
+              "description": "A lightweight React typography library with 40+ entrance animations and automatic Google Fonts support.",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Web",
+              "author": {
+                "@type": "Person",
+                "name": "Edwin Vakayil",
+                "url": "https://www.edwinvakayil.info/"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              }
+            })
+          }}
+        />
+      </body>
     </html>
   );
 }
